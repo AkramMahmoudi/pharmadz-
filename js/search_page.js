@@ -1,10 +1,7 @@
 /**
- * PharmaDZ - Dedicated Generic & Alternatives Search Engine
- * Searches any medication brand name, extracts its Generic (DCI) & Categories,
- * and fetches ALL alternative products across:
- * 1. Nomenclature Active
- * 2. Non Renouvelés
- * 3. Retraits
+ * PharmaDZ - Minimalist Generic & Alternatives Search
+ * Direct, streamlined, no cards:
+ * Summary strip + Clean data rows (Dosage, Princeps/Générique, Importé/Local, Lab).
  */
 
 (function () {
@@ -12,80 +9,40 @@
 
   const I18N = {
     ar: {
-      nav_back: "← الدليل الوطني الشامل (5,425 دواء)",
-      page_title: "محرك البحث عن المادة الفعالة والبدائل الصيدلانية",
-      page_subtitle: "أدخل اسم أي دواء تجاري لاستخراج تركيبته الجنيسة (DCI) وتصنيفه العلاجي، وجلب كافة البدائل المعتمدة، غير المجددة، والمسحوبة من السوق الجزائري.",
-      search_placeholder: "اكتب اسم الدواء التجاري (مثال: Doliprane, Artiz, Augmentin, Tahor...)",
-      suggestions_label: "أمثلة شائعة للتجربة السريعة:",
-      selected_med_title: "بطاقة الدواء المستهدف والمادة الفعالة",
-      generic_substance: "المادة الفعالة والجنيسة (DCI)",
-      therapeutic_category: "التصنيف العلاجي المعتمد",
-      status_active: "🟢 معتمد ومسجل حالياً في السوق (Active)",
-      status_non_renewed: "🟡 غير مجدد الصلاحية (Non Renouvelé)",
-      status_withdrawn: "🔴 مسحوب من السوق (Retiré du marché)",
-      alts_section_title: "جميع الأدوية والمنتجات البديلة بنفس المادة الفعالة",
-      tab_active: "المعتمدة حالياً في السوق",
-      tab_non_renewed: "غير المجددة",
-      tab_withdrawn: "المسحوبة من السوق",
-      no_active_alts: "لا توجد أدوية معتمدة بديلة أخرى مسجلة بنفس المادة الفعالة.",
-      no_non_renewed_alts: "لا توجد بدائل غير مجددة مسجلة لهذه المادة الفعالة.",
-      no_withdrawn_alts: "لا توجد أي بدائل مسحوبة لهذه المادة الفعالة (سجل سليم).",
-      print_report: "طباعة تقرير البدائل",
-      dosage: "الجرعة",
-      form: "الشكل الصيدلاني",
-      packaging: "التعليب",
-      lab: "المخبر المصنع",
-      country: "بلد الصنع",
-      reg_num: "رقم التسجيل",
-      code: "رمز الفئة",
-      type: "النوع",
-      origin: "المنشأ",
-      withdrawal_date: "تاريخ السحب",
-      withdrawal_reason: "سبب السحب",
-      details_btn: "عرض التفاصيل",
+      nav_back: "← الدليل الشامل (5,425 دواء)",
+      site_subtitle: "بحث المادة الفعالة والبدائل (Princeps / Générique / Importé)",
+      search_placeholder: "اكتب اسم الدواء فقط (مثال: Doliprane, Artiz, Augmentin, Tahor...)",
+      suggestions_label: "أمثلة سريعة:",
+      searched_med: "الدواء المبحوث عنه:",
+      generic_substance: "المادة الفعالة (DCI):",
+      therapeutic_category: "التصنيف العلاجي:",
+      tab_active: "المعتمدة في السوق (Nomenclature)",
+      tab_non_renewed: "غير المجددة (Non Renouvelés)",
+      tab_withdrawn: "المسحوبة من السوق (Retraits)",
       filter_all: "الكل",
-      filter_ge: "جنيس فقط (GE)",
-      filter_re: "أصلي مرجعي (RE)",
-      filter_local: "إنتاج محلي جزائري 🇩🇿",
-      results_found: "تم العثور على"
+      no_results: "لا توجد أدوية مطابقة لمعايير البحث الحالية.",
+      print_report: "طباعة",
+      status_active: "🟢 معتمد",
+      status_non_renewed: "🟡 غير مجدد",
+      status_withdrawn: "🔴 مسحوب"
     },
     fr: {
-      nav_back: "← Répertoire Complet (5 425 produits)",
-      page_title: "Recherche de la DCI & des Produits Équivalents",
-      page_subtitle: "Saisissez le nom commercial d'un médicament pour identifier sa DCI, sa classe thérapeutique et lister l'ensemble des alternatives (Nomenclature active, non renouvelés et retraits).",
-      search_placeholder: "Entrez le nom de marque (ex: Doliprane, Artiz, Augmentin, Tahor...)",
+      nav_back: "← Répertoire complet (5 425 produits)",
+      site_subtitle: "Recherche DCI & Équivalents (Princeps / Générique / Importé)",
+      search_placeholder: "Entrez le nom du médicament (ex: Doliprane, Artiz, Augmentin...)",
       suggestions_label: "Exemples rapides :",
-      selected_med_title: "Fiche d'identité & Substance Active (DCI)",
-      generic_substance: "Dénomination Commune Internationale (DCI)",
-      therapeutic_category: "Classe Thérapeutique",
-      status_active: "🟢 Produit Actif & Enregistré",
-      status_non_renewed: "🟡 Produit Non Renouvelé",
-      status_withdrawn: "🔴 Produit Retiré du Marché",
-      alts_section_title: "Produits et spécialités équivalentes partageant la même DCI",
-      tab_active: "Spécialités Actives",
+      searched_med: "Produit recherché :",
+      generic_substance: "Substance active (DCI) :",
+      therapeutic_category: "Classe thérapeutique :",
+      tab_active: "Spécialités Actives (Nomenclature)",
       tab_non_renewed: "Non Renouvelés",
       tab_withdrawn: "Retraits du Marché",
-      no_active_alts: "Aucune autre spécialité active enregistrée avec cette DCI.",
-      no_non_renewed_alts: "Aucun produit non renouvelé pour cette substance active.",
-      no_withdrawn_alts: "Aucun retrait enregistré pour cette substance active.",
-      print_report: "Imprimer le rapport des équivalents",
-      dosage: "Dosage",
-      form: "Forme",
-      packaging: "Conditionnement",
-      lab: "Laboratoire détenteur",
-      country: "Pays",
-      reg_num: "N° Enregistrement",
-      code: "Code Nomenclature",
-      type: "Type",
-      origin: "Origine",
-      withdrawal_date: "Date de Retrait",
-      withdrawal_reason: "Motif de Retrait",
-      details_btn: "Détails",
       filter_all: "Tous",
-      filter_ge: "Génériques (GE)",
-      filter_re: "Princeps (RE)",
-      filter_local: "Fabrication Locale 🇩🇿",
-      results_found: "Résultats trouvés :"
+      no_results: "Aucun produit ne correspond à ces critères.",
+      print_report: "Imprimer",
+      status_active: "🟢 Actif",
+      status_non_renewed: "🟡 Non Renouvelé",
+      status_withdrawn: "🔴 Retiré"
     }
   };
 
@@ -95,7 +52,7 @@
     selectedMed: null,
     selectedDci: null,
     activeSubTab: 'active', // 'active' | 'non_renewed' | 'withdrawn'
-    filterType: 'all', // 'all' | 'GE' | 'RE' | 'F'
+    filterType: 'all', // 'all' | 'RE' | 'GE' | 'I' | 'F'
     allMedsIndex: []
   };
 
@@ -110,14 +67,13 @@
     applyTheme();
     applyLanguage();
 
-    // Check URL parameters (e.g. search.html?q=ARTIZ or search.html?dci=PARACETAMOL)
+    // Check URL parameters (e.g. search.html?q=ARTIZ)
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q') || urlParams.get('dci');
     if (query) {
       if (el.searchInput) el.searchInput.value = query;
       performSearch(query);
     } else {
-      // Default sample search for Doliprane to show how it looks!
       performSearch('DOLIPRANE');
     }
   }
@@ -130,11 +86,12 @@
     el.clearSearchBtn = document.getElementById('clear-search-btn');
     el.searchDropdown = document.getElementById('search-dropdown');
     el.suggestionChips = document.querySelectorAll('[data-suggest]');
-    el.profileContainer = document.getElementById('profile-container');
+    el.summaryContainer = document.getElementById('summary-bar-container');
     el.altsSection = document.getElementById('alts-section');
     el.altsTabs = document.querySelectorAll('.alts-tab-btn');
     el.altsFilterPills = document.querySelectorAll('[data-alt-filter]');
-    el.altsGrid = document.getElementById('alts-grid');
+    el.rowsTbody = document.getElementById('minimal-rows-tbody');
+    el.thExtra = document.getElementById('th-extra');
     el.printReportBtn = document.getElementById('btn-print-report');
   }
 
@@ -179,7 +136,6 @@
       el.searchDropdown.style.display = 'none';
     });
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (!el.searchInput.contains(e.target) && !el.searchDropdown.contains(e.target)) {
         el.searchDropdown.style.display = 'none';
@@ -196,27 +152,27 @@
       });
     });
 
-    // Alternatives Tabs (Active, Non-renewed, Withdrawn)
+    // Tabs
     el.altsTabs?.forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
         state.activeSubTab = tab;
         el.altsTabs.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-        renderAlternatives();
+        renderRows();
       });
     });
 
-    // Sub-filters (All, GE, RE, Local)
+    // Sub-filters (All, Princeps, Générique, Importé, Local)
     el.altsFilterPills?.forEach(pill => {
       pill.addEventListener('click', () => {
         const filter = pill.dataset.altFilter;
         state.filterType = filter;
         el.altsFilterPills.forEach(p => p.classList.toggle('active', p.dataset.altFilter === filter));
-        renderAlternatives();
+        renderRows();
       });
     });
 
-    // Print Report
+    // Print
     el.printReportBtn?.addEventListener('click', () => {
       window.print();
     });
@@ -235,7 +191,7 @@
 
     if (matches.length === 0) {
       el.searchDropdown.innerHTML = `
-        <div style="padding: 1rem; color: var(--text-muted); text-align: center; font-size: 0.9rem;">
+        <div style="padding: 0.75rem; color: var(--text-muted); text-align: center; font-size: 0.85rem;">
           ${state.lang === 'ar' ? 'لا توجد نتائج مطابقة' : 'Aucun résultat trouvé'}
         </div>
       `;
@@ -245,22 +201,22 @@
 
     let html = '';
     matches.forEach(m => {
-      let badge = '';
-      if (m.sourceType === 'active') badge = '<span class="badge badge-ge" style="font-size: 0.68rem;">🟢 Active</span>';
-      else if (m.sourceType === 'non_renewed') badge = '<span class="badge" style="background:#fef3c7;color:#b45309;font-size:0.68rem;">🟡 Non Renouvelé</span>';
-      else badge = '<span class="badge" style="background:#ffe4e6;color:#e11d48;font-size:0.68rem;">🔴 Retiré</span>';
+      let typeBadge = m.type === 'RE' ? '<span class="tag-princeps" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Princeps</span>'
+        : m.type === 'GE' ? '<span class="tag-generique" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Générique</span>' : '';
+      let originBadge = m.statut === 'I' ? '<span class="tag-importe" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Importé</span>'
+        : '<span class="tag-local" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Local</span>';
 
       html += `
         <div class="search-dropdown-item" data-key="${m.reg || m.code}_${m.brand}">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
-            <strong style="color: var(--text-main); font-size: 0.95rem;">${m.brand}</strong>
-            ${badge}
+            <strong style="color: var(--text-main);">${m.brand}</strong>
+            <div style="display: flex; gap: 0.25rem;">
+              ${typeBadge}
+              ${originBadge}
+            </div>
           </div>
-          <div style="font-size: 0.78rem; color: var(--primary-600); margin-top: 0.15rem;">
-            🧬 DCI: ${m.dci} (${m.dosage} - ${m.form})
-          </div>
-          <div style="font-size: 0.72rem; color: var(--text-muted);">
-            🏢 ${m.lab} (${m.country})
+          <div style="font-size: 0.76rem; color: var(--primary-600); margin-top: 0.15rem;">
+            🧬 DCI: ${m.dci} • ${m.dosage || ''}
           </div>
         </div>
       `;
@@ -285,23 +241,16 @@
   function performSearch(term) {
     if (!term) return;
     const q = term.trim().toLowerCase();
-    // Try exact brand match first
     let match = state.allMedsIndex.find(m => m.brandLower === q);
-    if (!match) {
-      match = state.allMedsIndex.find(m => m.brandLower.startsWith(q));
-    }
-    if (!match) {
-      match = state.allMedsIndex.find(m => m.brandLower.includes(q) || m.dciLower.includes(q));
-    }
+    if (!match) match = state.allMedsIndex.find(m => m.brandLower.startsWith(q));
+    if (!match) match = state.allMedsIndex.find(m => m.brandLower.includes(q) || m.dciLower.includes(q));
 
     if (match) {
       selectTargetMed(match);
     } else {
-      el.profileContainer.innerHTML = `
-        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 3rem 1rem; text-align: center; color: var(--text-muted);">
-          <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
-          <h3>${state.lang === 'ar' ? 'لم يتم العثور على دواء بهذا الاسم' : 'Aucun médicament trouvé avec ce nom'}</h3>
-          <p>${state.lang === 'ar' ? 'يرجى التأكد من كتابة الاسم التجاري بشكل صحيح.' : 'Veuillez vérifier l\'orthographe du nom commercial.'}</p>
+      el.summaryContainer.innerHTML = `
+        <div style="background: var(--bg-card); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-muted);">
+          🔍 ${state.lang === 'ar' ? 'لم يتم العثور على دواء بهذا الاسم' : 'Aucun médicament trouvé'}
         </div>
       `;
       el.altsSection.style.display = 'none';
@@ -311,103 +260,54 @@
   function selectTargetMed(med) {
     state.selectedMed = med;
     state.selectedDci = (med.dci || '').trim().toUpperCase();
-    renderProfileCard(med);
-    updateAltTabBadges();
-    renderAlternatives();
+    renderSummaryStrip(med);
+    updateTabBadges();
+    renderRows();
     el.altsSection.style.display = 'block';
   }
 
-  function renderProfileCard(med) {
+  // Renders a sleek, single-line summary strip (No cards!)
+  function renderSummaryStrip(med) {
     const t = I18N[state.lang];
     const isAr = state.lang === 'ar';
-
     const cat = db?.categories[med.cat_id];
     const catName = isAr ? cat?.name_ar : cat?.name_fr;
 
-    let statusHtml = '';
-    if (med.sourceType === 'active') {
-      statusHtml = `<span class="badge" style="background:#dcfce7;color:#15803d;padding:0.4rem 0.85rem;font-size:0.85rem;">${t.status_active}</span>`;
-    } else if (med.sourceType === 'non_renewed') {
-      statusHtml = `<span class="badge" style="background:#fef3c7;color:#b45309;padding:0.4rem 0.85rem;font-size:0.85rem;">${t.status_non_renewed}</span>`;
-    } else {
-      statusHtml = `<span class="badge" style="background:#fee2e2;color:#991b1b;padding:0.4rem 0.85rem;font-size:0.85rem;">${t.status_withdrawn}</span>`;
-    }
+    let statusTag = '';
+    if (med.sourceType === 'active') statusTag = `<span class="badge" style="background:#dcfce7;color:#15803d;">${t.status_active}</span>`;
+    else if (med.sourceType === 'non_renewed') statusTag = `<span class="badge" style="background:#fef3c7;color:#b45309;">${t.status_non_renewed}</span>`;
+    else statusTag = `<span class="badge" style="background:#fee2e2;color:#991b1b;">${t.status_withdrawn}</span>`;
 
-    let typeBadge = med.type === 'GE' ? '🧬 Générique (GE)' : med.type === 'RE' ? '⭐ Princeps / Réf. (RE)' : med.type === 'BIO' ? '🧪 Biosimilaire (BIO)' : '—';
-    let originBadge = med.statut === 'F' ? '🇩🇿 Fabrication locale' : '🌐 Importation';
+    let typeTag = med.type === 'RE' ? '<span class="tag-princeps">⭐ Princeps</span>'
+      : med.type === 'GE' ? '<span class="tag-generique">🧬 Générique</span>'
+      : med.type === 'BIO' ? '<span class="tag-bio">🧪 Biosimilaire</span>' : '';
 
-    let html = `
-      <div class="product-profile-card">
-        <div class="profile-header-top">
-          <div>
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span class="badge badge-code" style="font-size: 0.8rem;">Code: ${med.code || '—'}</span>
-              ${statusHtml}
-              <span class="badge badge-local">${originBadge}</span>
-            </div>
-            <h1 class="profile-brand-name">${med.brand}</h1>
-            <div class="profile-dci-highlight">
-              <span style="font-size: 1.15rem;">🧬 ${t.generic_substance} :</span>
-              <strong style="color: var(--primary-600); font-size: 1.25rem;">${med.dci}</strong>
-            </div>
-          </div>
-          <div>
-            <span class="cat-pill-badge" title="${catName}">
-              ${cat?.icon || '💊'} Classe ${med.cat_id}: ${catName || '—'}
-            </span>
-          </div>
+    let originTag = med.statut === 'I' ? '<span class="tag-importe">🌐 Importé</span>' : '<span class="tag-local">🇩🇿 Local</span>';
+
+    el.summaryContainer.innerHTML = `
+      <div class="minimal-summary-bar">
+        <div class="summary-item">
+          <span class="summary-label">${t.searched_med}</span>
+          <span class="summary-val" style="font-size: 1.15rem; color: var(--text-main);">${med.brand}</span>
+          ${statusTag}
+          ${typeTag}
+          ${originTag}
         </div>
 
-        <div class="profile-specs-grid">
-          <div class="spec-box">
-            <span class="spec-box-label">${t.dosage}</span>
-            <span class="spec-box-val">${med.dosage || '—'}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">${t.form}</span>
-            <span class="spec-box-val">${med.form || '—'}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">${t.packaging}</span>
-            <span class="spec-box-val">${med.pkg || '—'}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">${t.type}</span>
-            <span class="spec-box-val">${typeBadge}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">${t.lab}</span>
-            <span class="spec-box-val" title="${med.lab}">${med.lab || '—'}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">${t.country}</span>
-            <span class="spec-box-val">${med.country || '—'}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">${t.reg_num}</span>
-            <span class="spec-box-val" style="font-family: monospace;">${med.reg || '—'}</span>
-          </div>
-          <div class="spec-box">
-            <span class="spec-box-label">Tableau / Liste</span>
-            <span class="spec-box-val">${med.list || '—'}</span>
-          </div>
+        <div class="summary-item">
+          <span class="summary-label">${t.generic_substance}</span>
+          <span class="summary-dci-val">${med.dci}</span>
         </div>
+
+        <div class="summary-item">
+          <span class="summary-label">${t.therapeutic_category}</span>
+          <span class="summary-val" style="color: var(--text-muted); font-size: 0.85rem;">${cat?.icon || ''} [${med.cat_id}] ${catName || '—'}</span>
+        </div>
+      </div>
     `;
-
-    if (med.sourceType === 'withdrawn') {
-      html += `
-        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-top: 1rem; color: #9f1239;">
-          <strong>⚠️ ${t.withdrawal_date}:</strong> ${med.withdrawal_date || '—'} | 
-          <strong>${t.withdrawal_reason}:</strong> ${med.withdrawal_reason || '—'}
-        </div>
-      `;
-    }
-
-    html += `</div>`;
-    el.profileContainer.innerHTML = html;
   }
 
-  function updateAltTabBadges() {
+  function updateTabBadges() {
     if (!state.selectedDci) return;
     const dci = state.selectedDci;
 
@@ -415,17 +315,18 @@
     const nonRenewedCount = db.non_renewed.filter(i => (i.dci || '').trim().toUpperCase() === dci).length;
     const withdrawnCount = db.withdrawn.filter(i => (i.dci || '').trim().toUpperCase() === dci).length;
 
-    const badgeActive = document.getElementById('badge-count-active');
-    const badgeNonRenewed = document.getElementById('badge-count-non-renewed');
-    const badgeWithdrawn = document.getElementById('badge-count-withdrawn');
+    const bActive = document.getElementById('badge-count-active');
+    const bNonRenewed = document.getElementById('badge-count-non-renewed');
+    const bWithdrawn = document.getElementById('badge-count-withdrawn');
 
-    if (badgeActive) badgeActive.textContent = activeCount;
-    if (badgeNonRenewed) badgeNonRenewed.textContent = nonRenewedCount;
-    if (badgeWithdrawn) badgeWithdrawn.textContent = withdrawnCount;
+    if (bActive) bActive.textContent = activeCount;
+    if (bNonRenewed) bNonRenewed.textContent = nonRenewedCount;
+    if (bWithdrawn) bWithdrawn.textContent = withdrawnCount;
   }
 
-  function renderAlternatives() {
-    if (!state.selectedDci || !el.altsGrid) return;
+  // Renders the minimal clean table rows
+  function renderRows() {
+    if (!state.selectedDci || !el.rowsTbody) return;
     const t = I18N[state.lang];
     const isAr = state.lang === 'ar';
     const dci = state.selectedDci;
@@ -438,107 +339,106 @@
     // Filter by DCI
     let alts = targetList.filter(i => (i.dci || '').trim().toUpperCase() === dci);
 
-    // Apply sub-filters (GE, RE, Local)
-    if (state.filterType === 'GE') {
-      alts = alts.filter(i => i.type === 'GE');
-    } else if (state.filterType === 'RE') {
+    // Apply sub-filters
+    if (state.filterType === 'RE') {
       alts = alts.filter(i => i.type === 'RE');
+    } else if (state.filterType === 'GE') {
+      alts = alts.filter(i => i.type === 'GE');
+    } else if (state.filterType === 'I') {
+      alts = alts.filter(i => i.statut === 'I');
     } else if (state.filterType === 'F') {
       alts = alts.filter(i => i.statut === 'F');
     }
 
-    if (alts.length === 0) {
-      let emptyMsg = t.no_active_alts;
-      if (state.activeSubTab === 'non_renewed') emptyMsg = t.no_non_renewed_alts;
-      else if (state.activeSubTab === 'withdrawn') emptyMsg = t.no_withdrawn_alts;
+    // Toggle extra column for Withdrawn reasons
+    const isWithdrawn = state.activeSubTab === 'withdrawn';
+    if (el.thExtra) {
+      el.thExtra.style.display = isWithdrawn ? '' : 'none';
+    }
 
-      el.altsGrid.innerHTML = `
-        <div style="grid-column: 1 / -1; background: var(--bg-card); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 3rem 1rem; text-align: center; color: var(--text-muted);">
-          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🍃</div>
-          <p style="font-weight: 600;">${emptyMsg}</p>
-        </div>
+    if (alts.length === 0) {
+      el.rowsTbody.innerHTML = `
+        <tr>
+          <td colspan="${isWithdrawn ? 8 : 7}" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+            🍃 ${t.no_results}
+          </td>
+        </tr>
       `;
       return;
     }
 
     let html = '';
-    alts.forEach(alt => {
-      const isTarget = state.selectedMed && alt.brand === state.selectedMed.brand && alt.reg === state.selectedMed.reg;
+    alts.forEach(item => {
+      const isTarget = state.selectedMed && item.brand === state.selectedMed.brand && item.reg === state.selectedMed.reg;
 
-      let typeBadge = alt.type === 'GE' ? '<span class="badge badge-ge">🧬 Générique</span>'
-        : alt.type === 'RE' ? '<span class="badge badge-re">⭐ Princeps</span>'
-        : alt.type === 'BIO' ? '<span class="badge badge-bio">🧪 Bio</span>' : '';
+      // Type Badge (Princeps vs Générique)
+      let typeBadge = '';
+      if (item.type === 'RE') {
+        typeBadge = '<span class="tag-princeps">⭐ Princeps</span>';
+      } else if (item.type === 'GE') {
+        typeBadge = '<span class="tag-generique">🧬 Générique</span>';
+      } else if (item.type === 'BIO') {
+        typeBadge = '<span class="tag-bio">🧪 Biosimilaire</span>';
+      } else {
+        typeBadge = '<span style="color:var(--text-muted);font-size:0.75rem;">—</span>';
+      }
 
-      let originBadge = alt.statut === 'F' ? '<span class="badge badge-local">🇩🇿 Local</span>' : '<span class="badge badge-import">🌐 Import</span>';
-
-      html += `
-        <div class="alt-product-card ${isTarget ? 'is-target' : ''}">
-          <div class="alt-card-header">
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
-                ${typeBadge}
-                ${originBadge}
-                ${isTarget ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-weight:bold;">${isAr ? 'الدواء الحالي' : 'Actuel'}</span>` : ''}
-              </div>
-              <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.2rem;">${alt.brand}</h3>
-              <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary-600);">${alt.dosage} • ${alt.form}</div>
-            </div>
-            <div style="font-family: monospace; font-size: 0.75rem; color: var(--text-muted); background: var(--bg-subtle); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm);">
-              ${alt.code}
-            </div>
-          </div>
-
-          <div class="alt-card-details">
-            <div class="spec-row">
-              <span class="spec-key">${t.packaging}:</span>
-              <span class="spec-val">${alt.pkg || '—'}</span>
-            </div>
-            <div class="spec-row">
-              <span class="spec-key">${t.lab}:</span>
-              <span class="spec-val" title="${alt.lab}">${alt.lab || '—'}</span>
-            </div>
-            <div class="spec-row">
-              <span class="spec-key">${t.country}:</span>
-              <span class="spec-val">${alt.country || '—'}</span>
-            </div>
-            <div class="spec-row">
-              <span class="spec-key">${t.reg_num}:</span>
-              <span class="spec-val" style="font-family: monospace;">${alt.reg || '—'}</span>
-            </div>
-          </div>
-      `;
-
-      if (state.activeSubTab === 'withdrawn') {
-        html += `
-          <div style="background: #fff1f2; border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; margin-top: 0.65rem; font-size: 0.75rem; color: #9f1239;">
-            <strong>${t.withdrawal_date}:</strong> ${alt.withdrawal_date || '—'}<br>
-            <strong>${t.withdrawal_reason}:</strong> ${alt.withdrawal_reason || '—'}
-          </div>
-        `;
+      // Origin Badge (Importé vs Local)
+      let originBadge = '';
+      if (item.statut === 'I') {
+        originBadge = '<span class="tag-importe">🌐 Importé</span>';
+      } else if (item.statut === 'F') {
+        originBadge = '<span class="tag-local">🇩🇿 Local</span>';
+      } else {
+        originBadge = '<span style="color:var(--text-muted);font-size:0.75rem;">—</span>';
       }
 
       html += `
-          <div style="margin-top: 0.75rem; text-align: end;">
-            <button class="btn btn-outline" data-inspect-brand="${alt.brand}" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
-              ${t.details_btn}
-            </button>
-          </div>
-        </div>
+        <tr class="${isTarget ? 'row-target' : ''}" data-brand="${item.brand}">
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.35rem;">
+              <span class="med-brand-link">${item.brand}</span>
+              ${isTarget ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.68rem;padding:0.1rem 0.35rem;">${isAr ? 'الدواء المبحوث عنه' : 'Recherché'}</span>` : ''}
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">N° ${item.reg || '—'}</div>
+          </td>
+          <td style="font-weight: 700; color: var(--text-main); font-size: 0.9rem;">
+            ${item.dosage || '—'}
+          </td>
+          <td style="font-size: 0.82rem; color: var(--text-muted);">
+            ${item.form || '—'}
+          </td>
+          <td>
+            ${typeBadge}
+          </td>
+          <td>
+            ${originBadge}
+          </td>
+          <td>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);" title="${item.lab}">
+              ${item.lab || '—'}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+              ${item.country || '—'}
+            </div>
+          </td>
+          <td style="font-size: 0.82rem; color: var(--text-muted);">
+            ${item.pkg || '—'}
+          </td>
       `;
+
+      if (isWithdrawn) {
+        html += `
+          <td style="font-size: 0.78rem; color: #9f1239; background: #fff1f2;">
+            <strong>${item.withdrawal_date || ''}</strong>: ${item.withdrawal_reason || '—'}
+          </td>
+        `;
+      }
+
+      html += `</tr>`;
     });
 
-    el.altsGrid.innerHTML = html;
-
-    el.altsGrid.querySelectorAll('[data-inspect-brand]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const brand = btn.dataset.inspectBrand;
-        const target = state.allMedsIndex.find(m => m.brand === brand);
-        if (target) {
-          selectTargetMed(target);
-          window.scrollTo({ top: el.profileContainer.offsetTop - 80, behavior: 'smooth' });
-        }
-      });
-    });
+    el.rowsTbody.innerHTML = html;
   }
 
   function applyTheme() {
@@ -546,8 +446,8 @@
     const isDark = state.theme === 'dark';
     if (el.themeBtn) {
       el.themeBtn.innerHTML = isDark
-        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
-        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
     }
   }
 
@@ -571,8 +471,8 @@
     if (el.langBtn) el.langBtn.innerHTML = `<span>${state.lang === 'ar' ? 'Français' : 'العربية'}</span>`;
 
     if (state.selectedMed) {
-      renderProfileCard(state.selectedMed);
-      renderAlternatives();
+      renderSummaryStrip(state.selectedMed);
+      renderRows();
     }
   }
 
