@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>البحث عن المادة الفعالة والبدائل الجنيسة - PharmaDZ</title>
+  <meta name="description" content="محرك بحث ذكي للأدوية الجزائرية: أدخل اسم أي دواء لمعرفة مادته الفعالة DCI وتصنيفه العلاجي وجلب جميع بدائله المعتمدة، غير المجددة، والمسحوبة.">
+
+  <!-- Google Fonts: Cairo & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= Header ================= -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-wrapper" onclick="window.location.href='index.html'">
+        <div class="brand-icon-box" style="background: linear-gradient(135deg, var(--accent-purple), var(--primary-600));">
+          🧬
+        </div>
+        <div class="brand-text">
+          <h1>
+            <span>PharmaDZ</span>
+            <span class="brand-badge" style="background:#f3e8ff;color:#7e22ce;">Génériques & DCI</span>
+          </h1>
+          <p data-i18n="site_subtitle">وزارة الصناعة الصيدلانية • محرك البدائل الصيدلانية</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Back to Full Directory Link -->
+        <a href="index.html" class="btn btn-outline btn-pill" style="font-weight: 700;">
+          <span data-i18n="nav_back">← الدليل الوطني الشامل (5,425 دواء)</span>
+        </a>
+
+        <!-- Print Report -->
+        <button id="btn-print-report" class="btn btn-primary btn-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span data-i18n="print_report">طباعة تقرير البدائل</span>
+        </button>
+
+        <!-- Language Toggle -->
+        <button id="btn-lang-toggle" class="btn btn-outline" style="font-weight: bold; min-width: 80px;">
+          <span>Français</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="btn-theme-toggle" class="btn-icon" title="تبديل المظهر">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= Hero Search Section ================= -->
+  <section class="hero-section" style="background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-page) 100%); padding-block: 2rem 1.5rem;">
+    <div class="container">
+      <div class="hero-header" style="max-width: 850px; margin-inline: auto; text-align: center; margin-bottom: 1.5rem;">
+        <h2 class="hero-title" data-i18n="page_title" style="font-size: 2.1rem; color: var(--text-main);">
+          محرك البحث عن المادة الفعالة والبدائل الصيدلانية
+        </h2>
+        <p class="hero-subtitle" data-i18n="page_subtitle">
+          أدخل اسم أي دواء تجاري لاستخراج تركيبته الجنيسة (DCI) وتصنيفه العلاجي، وجلب كافة البدائل المعتمدة، غير المجددة، والمسحوبة من السوق الجزائري.
+        </p>
+      </div>
+
+      <!-- Search Input Container with Dropdown -->
+      <div style="max-width: 820px; margin-inline: auto; position: relative;">
+        <div class="search-input-box" style="box-shadow: var(--shadow-md); border-radius: var(--radius-md);">
+          <span class="search-icon" style="font-size: 1.3rem;">🔍</span>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            style="font-size: 1.15rem; padding-block: 1rem; border-width: 2px;"
+            placeholder="اكتب اسم الدواء التجاري (مثال: Doliprane, Artiz, Augmentin, Tahor...)"
+            autocomplete="off"
+            autofocus
+          >
+          <button id="clear-search-btn" class="clear-search-btn" title="مسح">✕</button>
+        </div>
+
+        <!-- Autocomplete Suggestions Dropdown -->
+        <div id="search-dropdown" class="search-dropdown-menu"></div>
+
+        <!-- Quick Suggestions Chips -->
+        <div class="suggestions-bar">
+          <span data-i18n="suggestions_label">أمثلة شائعة للتجربة:</span>
+          <button class="suggestion-chip" data-suggest="DOLIPRANE">Doliprane 💊</button>
+          <button class="suggestion-chip" data-suggest="ARTIZ">Artiz 🤧</button>
+          <button class="suggestion-chip" data-suggest="VOLTARENE">Voltarène 🩹</button>
+          <button class="suggestion-chip" data-suggest="AUGMENTIN">Augmentin 🦠</button>
+          <button class="suggestion-chip" data-suggest="TAHOR">Tahor ❤️</button>
+          <button class="suggestion-chip" data-suggest="GLUCOPHAGE">Glucophage 🍏</button>
+          <button class="suggestion-chip" data-suggest="FLAGYL">Flagyl 🦠</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Main Body Container ================= -->
+  <main class="container" style="padding-top: 2rem;">
+
+    <!-- Target Medicine Identity Profile Card -->
+    <div id="profile-container">
+      <!-- Populated by js/search_page.js -->
+    </div>
+
+    <!-- Alternatives & Equivalents Section -->
+    <section id="alts-section" class="alts-section-wrapper" style="display: none;">
+      <div class="alts-header-bar">
+        <div>
+          <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+            <span>🧬</span>
+            <span data-i18n="alts_section_title">جميع الأدوية والمنتجات البديلة بنفس المادة الفعالة</span>
+          </h2>
+        </div>
+
+        <!-- Filter Pills for Alternatives -->
+        <div class="filter-pills-row" style="border: none; padding: 0;">
+          <span class="pill-filter active" data-alt-filter="all" data-i18n="filter_all">الكل</span>
+          <span class="pill-filter" data-alt-filter="GE" data-i18n="filter_ge">جنيس فقط (GE)</span>
+          <span class="pill-filter" data-alt-filter="RE" data-i18n="filter_re">أصلي مرجعي (RE)</span>
+          <span class="pill-filter" data-alt-filter="F" data-i18n="filter_local">إنتاج محلي 🇩🇿</span>
+        </div>
+      </div>
+
+      <!-- Sub-Tabs: Nomenclature Active vs Non Renouvelés vs Retraits -->
+      <div class="alts-subtabs-nav">
+        <button class="alts-tab-btn active" data-tab="active">
+          <span>🟢</span>
+          <span data-i18n="tab_active">المعتمدة حالياً في السوق</span>
+          <span id="badge-count-active" class="badge-count">0</span>
+        </button>
+        <button class="alts-tab-btn" data-tab="non_renewed">
+          <span>🟡</span>
+          <span data-i18n="tab_non_renewed">غير المجددة (Non Renouvelés)</span>
+          <span id="badge-count-non-renewed" class="badge-count">0</span>
+        </button>
+        <button class="alts-tab-btn" data-tab="withdrawn">
+          <span>🔴</span>
+          <span data-i18n="tab_withdrawn">المسحوبة من السوق (Retraits)</span>
+          <span id="badge-count-withdrawn" class="badge-count">0</span>
+        </button>
+      </div>
+
+      <!-- Alternatives Grid Container -->
+      <div id="alts-grid" class="alts-cards-grid" style="margin-top: 1.5rem;">
+        <!-- Rendered by js/search_page.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= Footer ================= -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">
+        🇩🇿 الجمهورية الجزائرية الديمقراطية الشعبية - وزارة الصناعة الصيدلانية
+      </div>
+      <div>
+        محرك البحث عن البدائل الصيدلانية والجنيسة • Nomenclature Nationale des Produits Pharmaceutiques
+      </div>
+      <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+        <a href="index.html" style="color: var(--primary-600); font-weight: bold; text-decoration: none;">
+          ← العودة إلى الدليل الشامل (5,425 دواء)
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Data Script -->
+  <script src="data/medications_data.js"></script>
+
+  <!-- Search Page Script -->
+  <script src="js/search_page.js"></script>
+</body>
+</html>
