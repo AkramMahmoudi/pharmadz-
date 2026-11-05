@@ -1,8 +1,9 @@
 /**
- * PharmaDZ - Minimalist Generic & Alternatives Search
- * Direct, streamlined, no cards, no clutter:
- * Summary strip + Clean data rows (Dosage, Princeps/Générique, Importé/Local, Lab).
- * Intelligently prioritizes and sorts dosages (1000MG at top).
+ * PharmaDZ - Code DCI, DCI & Laboratory Alternatives Search
+ * When a user writes a product name (e.g. ACEBUTOLOL IVAL):
+ * 1. Extracts its Code DCI (e.g. 06 F 067)
+ * 2. Matches and fetches all products by this Code DCI (default)
+ * 3. Allows toggling to DCI (broader) or Laboratory via radio mode selector.
  */
 
 (function () {
@@ -11,11 +12,13 @@
   const I18N = {
     ar: {
       nav_back: "← الدليل الشامل (5,425 دواء)",
-      site_subtitle: "بحث المادة الفعالة والبدائل (Princeps / Générique / Importé)",
-      search_placeholder: "اكتب اسم الدواء فقط (مثال: Doliprane 1000, Voltarene, Augmentin...)",
+      site_subtitle: "بحث كود المادة والبدائل (Code DCI / DCI / Laboratoire)",
+      search_placeholder: "اكتب اسم الدواء فقط (مثال: ACEBUTOLOL IVAL, Doliprane, Artiz...)",
       suggestions_label: "أمثلة سريعة:",
       searched_med: "الدواء المبحوث عنه:",
+      code_dci: "كود المادة (Code DCI):",
       generic_substance: "المادة الفعالة (DCI):",
+      manufacturer_lab: "المخبر المصنع:",
       therapeutic_category: "التصنيف العلاجي:",
       tab_active: "المعتمدة في السوق (Nomenclature)",
       tab_non_renewed: "غير المجددة (Non Renouvelés)",
@@ -25,15 +28,20 @@
       print_report: "طباعة",
       status_active: "🟢 معتمد",
       status_non_renewed: "🟡 غير مجدد",
-      status_withdrawn: "🔴 مسحوب"
+      status_withdrawn: "🔴 مسحوب",
+      mode_code_active: "🎯 المطابقة حسب كود المادة (Code DCI)",
+      mode_dci_active: "🧬 المطابقة حسب المادة الفعالة (DCI الشامل)",
+      mode_lab_active: "🏢 المطابقة حسب المخبر المصنع (Laboratoire)"
     },
     fr: {
       nav_back: "← Répertoire complet (5 425 produits)",
-      site_subtitle: "Recherche DCI & Équivalents (Princeps / Générique / Importé)",
-      search_placeholder: "Entrez le nom du médicament (ex: Doliprane 1000, Voltarene...)",
+      site_subtitle: "Recherche par Code DCI, Substance & Laboratoire",
+      search_placeholder: "Entrez le nom du médicament (ex: ACEBUTOLOL IVAL, Doliprane...)",
       suggestions_label: "Exemples rapides :",
       searched_med: "Produit recherché :",
+      code_dci: "Code DCI :",
       generic_substance: "Substance active (DCI) :",
+      manufacturer_lab: "Laboratoire détenteur :",
       therapeutic_category: "Classe thérapeutique :",
       tab_active: "Spécialités Actives (Nomenclature)",
       tab_non_renewed: "Non Renouvelés",
@@ -43,7 +51,10 @@
       print_report: "Imprimer",
       status_active: "🟢 Actif",
       status_non_renewed: "🟡 Non Renouvelé",
-      status_withdrawn: "🔴 Retiré"
+      status_withdrawn: "🔴 Retiré",
+      mode_code_active: "🎯 Filtrage par Code DCI",
+      mode_dci_active: "🧬 Filtrage par DCI globale",
+      mode_lab_active: "🏢 Filtrage par Laboratoire détenteur"
     }
   };
 
@@ -51,8 +62,11 @@
     lang: localStorage.getItem('pharmadz_lang') || 'ar',
     theme: localStorage.getItem('pharmadz_theme') || 'light',
     selectedMed: null,
+    selectedCode: null, // e.g. '06 F 067'
     selectedDci: null,
     selectedDciRoot: null,
+    selectedLab: null,
+    searchMode: 'code', // 'code' | 'dci' | 'lab'
     activeSubTab: 'active', // 'active' | 'non_renewed' | 'withdrawn'
     filterType: 'all', // 'all' | 'RE' | 'GE' | 'I' | 'F'
     allMedsIndex: []
@@ -78,7 +92,7 @@
     const c = cleanStr(dciStr);
     if (!c) return '';
     const KNOWN_ROOTS = [
-      'DICLOFENAC', 'PARACETAMOL', 'AMOXICILLINE', 'CETIRIZINE', 'IBUPROFENE',
+      'ACEBUTOLOL', 'DICLOFENAC', 'PARACETAMOL', 'AMOXICILLINE', 'CETIRIZINE', 'IBUPROFENE',
       'OMEPRAZOLE', 'ESOMEPRAZOLE', 'CIPROFLOXACINE', 'METRONIDAZOLE', 'AZITHROMYCINE',
       'ATORVASTATINE', 'ROSUVASTATINE', 'METFORMINE', 'AMLODIPINE', 'VALSARTAN',
       'CANDESARTAN', 'LOSARTAN', 'PREGABALINE', 'CLOPIDOGREL', 'PANTOPRAZOLE'
@@ -97,12 +111,12 @@
     applyLanguage();
 
     const urlParams = new URLSearchParams(window.location.search);
-    const query = urlParams.get('q') || urlParams.get('dci');
+    const query = urlParams.get('q') || urlParams.get('dci') || urlParams.get('code');
     if (query) {
       if (el.searchInput) el.searchInput.value = query;
       performSearch(query);
     } else {
-      performSearch('DOLIPRANE 1000');
+      performSearch('ACEBUTOLOL IVAL');
     }
   }
 
@@ -114,6 +128,7 @@
     el.clearSearchBtn = document.getElementById('clear-search-btn');
     el.searchDropdown = document.getElementById('search-dropdown');
     el.suggestionChips = document.querySelectorAll('[data-suggest]');
+    el.searchModeRadios = document.querySelectorAll('input[name="search-mode"]');
     el.summaryContainer = document.getElementById('summary-bar-container');
     el.altsSection = document.getElementById('alts-section');
     el.altsTabs = document.querySelectorAll('.alts-tab-btn');
@@ -130,16 +145,19 @@
       items.forEach(itm => {
         const b = itm.brand || '';
         const d = itm.dci || '';
+        const c = itm.code || '';
         const dos = itm.dosage || '';
         const f = itm.form || '';
+        const l = itm.lab || '';
         list.push({
           ...itm,
           sourceType: sourceLabel,
           brandLower: b.toLowerCase(),
           dciLower: d.toLowerCase(),
-          dosageLower: dos.toLowerCase(),
+          codeClean: c.trim().toUpperCase(),
+          labClean: cleanStr(l),
           dciRoot: getDciRoot(d),
-          fullSearchStr: cleanStr(`${b} ${dos} ${d} ${f}`)
+          fullSearchStr: cleanStr(`${b} ${dos} ${d} ${c} ${f} ${l}`)
         });
       });
     };
@@ -195,6 +213,20 @@
         el.searchInput.value = term;
         el.clearSearchBtn.style.display = 'block';
         performSearch(term);
+      });
+    });
+
+    // Search Mode Radios (Code DCI, DCI, Laboratoire)
+    el.searchModeRadios?.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.checked) {
+          state.searchMode = radio.value;
+          if (state.selectedMed) {
+            renderSummaryStrip(state.selectedMed);
+            updateTabBadges();
+            renderRows();
+          }
+        }
       });
     });
 
@@ -260,7 +292,8 @@
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
             <div>
               <strong style="color: var(--text-main); font-size: 0.95rem;">${m.brand}</strong>
-              <span class="dosage-badge-val" style="margin-inline-start: 0.35rem; font-size: 0.78rem;">${m.dosage}</span>
+              <span class="summary-code-val" style="margin-inline-start: 0.35rem; font-size: 0.75rem; padding: 0.1rem 0.4rem;">${m.code}</span>
+              <span class="dosage-badge-val" style="margin-inline-start: 0.25rem; font-size: 0.75rem;">${m.dosage}</span>
             </div>
             <div style="display: flex; gap: 0.25rem;">
               ${typeBadge}
@@ -268,7 +301,7 @@
             </div>
           </div>
           <div style="font-size: 0.75rem; color: var(--primary-600); margin-top: 0.15rem;">
-            🧬 DCI: ${m.dci} • ${m.form || ''}
+            🧬 DCI: ${m.dci} • 🏢 ${m.lab || ''}
           </div>
         </div>
       `;
@@ -282,7 +315,7 @@
         const key = item.dataset.key;
         const target = state.allMedsIndex.find(m => `${m.reg || m.code}_${m.brand}_${m.dosage}` === key);
         if (target) {
-          el.searchInput.value = `${target.brand} ${target.dosage}`;
+          el.searchInput.value = target.brand;
           el.searchDropdown.style.display = 'none';
           selectTargetMed(target);
         }
@@ -295,20 +328,22 @@
     const cleanedQ = cleanStr(term);
     const tokens = cleanedQ.split(' ').filter(Boolean);
 
-    // Multi-token match across full search string (Brand, Dosage, DCI)
-    let candidates = state.allMedsIndex.filter(itm => {
-      return tokens.every(tok => itm.fullSearchStr.includes(tok));
-    });
+    // 1. Direct match by exact Code DCI (e.g. user typed "06 F 067")
+    let match = state.allMedsIndex.find(m => m.codeClean === cleanedQ);
 
-    // Check if query specifies a dosage like 1000 or 500 or 100
-    const numberToken = tokens.find(tok => /^\d+$/.test(tok));
+    // 2. Multi-token match across full search string (Brand, Dosage, Code, DCI)
+    if (!match) {
+      let candidates = state.allMedsIndex.filter(itm => {
+        return tokens.every(tok => itm.fullSearchStr.includes(tok));
+      });
 
-    let match = null;
-    if (candidates.length > 0) {
-      if (numberToken) {
-        match = candidates.find(c => (c.dosage || '').includes(numberToken));
+      const numberToken = tokens.find(tok => /^\d+$/.test(tok));
+      if (candidates.length > 0) {
+        if (numberToken) {
+          match = candidates.find(c => (c.dosage || '').includes(numberToken));
+        }
+        if (!match) match = candidates[0];
       }
-      if (!match) match = candidates[0];
     }
 
     if (!match) {
@@ -320,7 +355,7 @@
     } else {
       el.summaryContainer.innerHTML = `
         <div style="background: var(--bg-card); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-muted);">
-          🔍 ${state.lang === 'ar' ? 'لم يتم العثور على دواء بهذا الاسم والجرعة' : 'Aucun médicament trouvé avec ce nom et dosage'}
+          🔍 ${state.lang === 'ar' ? 'لم يتم العثور على دواء بهذا الاسم أو الرمز' : 'Aucun médicament trouvé avec ce nom ou code'}
         </div>
       `;
       el.altsSection.style.display = 'none';
@@ -329,8 +364,10 @@
 
   function selectTargetMed(med) {
     state.selectedMed = med;
+    state.selectedCode = (med.code || '').trim().toUpperCase();
     state.selectedDci = (med.dci || '').trim();
     state.selectedDciRoot = med.dciRoot || getDciRoot(med.dci);
+    state.selectedLab = (med.lab || '').trim();
 
     renderSummaryStrip(med);
     updateTabBadges();
@@ -338,7 +375,7 @@
     el.altsSection.style.display = 'block';
   }
 
-  // Renders a sleek, single-line summary strip
+  // Renders the sleek summary strip with Code DCI, DCI, and Lab
   function renderSummaryStrip(med) {
     const t = I18N[state.lang];
     const isAr = state.lang === 'ar';
@@ -356,6 +393,11 @@
 
     let originTag = med.statut === 'I' ? '<span class="tag-importe">🌐 Importé</span>' : '<span class="tag-local">🇩🇿 Local</span>';
 
+    // Active mode label
+    let modeText = t.mode_code_active;
+    if (state.searchMode === 'dci') modeText = t.mode_dci_active;
+    else if (state.searchMode === 'lab') modeText = t.mode_lab_active;
+
     el.summaryContainer.innerHTML = `
       <div class="minimal-summary-bar">
         <div class="summary-item">
@@ -368,26 +410,61 @@
         </div>
 
         <div class="summary-item">
+          <span class="summary-label">${t.code_dci}</span>
+          <span class="summary-code-val" title="رمز الدواء في المدونة">${med.code || '—'}</span>
+        </div>
+
+        <div class="summary-item">
           <span class="summary-label">${t.generic_substance}</span>
           <span class="summary-dci-val">${med.dci}</span>
         </div>
 
         <div class="summary-item">
-          <span class="summary-label">${t.therapeutic_category}</span>
-          <span class="summary-val" style="color: var(--text-muted); font-size: 0.85rem;">${cat?.icon || '💊'} [${med.cat_id}] ${catName || '—'}</span>
+          <span class="summary-label">${t.manufacturer_lab}</span>
+          <span class="summary-val" style="font-size: 0.85rem;" title="${med.lab}">${med.lab || '—'}</span>
+        </div>
+
+        <div class="summary-item" style="border-inline-start: 1px solid var(--border-color); padding-inline-start: 0.75rem;">
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary-700); background: var(--primary-50); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm);">
+            ${modeText}
+          </span>
         </div>
       </div>
     `;
   }
 
+  // Core Filtering by Code DCI (default), or DCI, or Lab
   function getMatchingAlternatives(targetList) {
-    if (!state.selectedDciRoot) return [];
-    const root = state.selectedDciRoot;
+    if (!state.selectedMed) return [];
 
-    return targetList.filter(i => {
-      const itmRoot = i.dciRoot || getDciRoot(i.dci);
-      return itmRoot === root;
-    });
+    // Mode 1: Code DCI (User's primary requirement: matches exact Code, e.g. 06 F 067)
+    if (state.searchMode === 'code') {
+      const code = state.selectedCode;
+      if (!code) return [];
+      return targetList.filter(i => (i.code || '').trim().toUpperCase() === code);
+    }
+
+    // Mode 2: DCI (Broader matching by active substance)
+    if (state.searchMode === 'dci') {
+      const root = state.selectedDciRoot || getDciRoot(state.selectedDci);
+      if (!root) return [];
+      return targetList.filter(i => {
+        const itmRoot = i.dciRoot || getDciRoot(i.dci);
+        return itmRoot === root;
+      });
+    }
+
+    // Mode 3: Manufacturer Laboratory (Matches by Lab name)
+    if (state.searchMode === 'lab') {
+      const labClean = cleanStr(state.selectedLab);
+      if (!labClean) return [];
+      return targetList.filter(i => {
+        const iLab = cleanStr(i.lab);
+        return iLab === labClean || (labClean.length > 5 && iLab.includes(labClean));
+      });
+    }
+
+    return [];
   }
 
   function updateTabBadges() {
@@ -406,7 +483,7 @@
 
   // Renders the minimal clean table rows
   function renderRows() {
-    if (!state.selectedDciRoot || !el.rowsTbody) return;
+    if (!state.selectedMed || !el.rowsTbody) return;
     const t = I18N[state.lang];
     const isAr = state.lang === 'ar';
 
@@ -415,7 +492,7 @@
     else if (state.activeSubTab === 'non_renewed') targetList = db.non_renewed;
     else if (state.activeSubTab === 'withdrawn') targetList = db.withdrawn;
 
-    // Filter by DCI Root
+    // Filter according to active mode (Code DCI, DCI, or Lab)
     let alts = getMatchingAlternatives(targetList);
 
     // Apply Princeps / Generique / Import / Local filters
@@ -429,9 +506,9 @@
       alts = alts.filter(i => i.statut === 'F');
     }
 
-    // Sort intelligently:
-    // 1. Target medication first
-    // 2. Highest numerical dosages first (e.g. 1000MG at top, then 500MG, 100MG, etc.)
+    // Sort:
+    // 1. Target medication at top
+    // 2. Numerical dosage descending (1000mg at top)
     alts.sort((a, b) => {
       const isTargetA = state.selectedMed && a.brand === state.selectedMed.brand && a.reg === state.selectedMed.reg;
       const isTargetB = state.selectedMed && b.brand === state.selectedMed.brand && b.reg === state.selectedMed.reg;
@@ -453,7 +530,7 @@
     if (alts.length === 0) {
       el.rowsTbody.innerHTML = `
         <tr>
-          <td colspan="${isWithdrawn ? 8 : 7}" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+          <td colspan="${isWithdrawn ? 9 : 8}" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
             🍃 ${t.no_results}
           </td>
         </tr>
@@ -495,6 +572,11 @@
               ${isTarget ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.68rem;padding:0.1rem 0.35rem;">${isAr ? 'الدواء المبحوث عنه' : 'Recherché'}</span>` : ''}
             </div>
             <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">N° ${item.reg || '—'}</div>
+          </td>
+          <td>
+            <span class="summary-code-val" style="font-size: 0.8rem; padding: 0.15rem 0.45rem;">
+              ${item.code || '—'}
+            </span>
           </td>
           <td>
             <span class="dosage-badge-val">${item.dosage || '—'}</span>
