@@ -1942,3 +1942,44 @@ body {
   color: #2dd4bf;
   border-color: rgba(20, 184, 166, 0.3);
 }
+
+
+/* Dosage Filter Bar & Badge Styles */
+.dosage-pill-btn {
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.dosage-pill-btn:hover {
+  border-color: var(--primary-500);
+  background: var(--bg-subtle);
+}
+.dosage-pill-btn.active {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: white;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.dosage-badge-val {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--primary-700);
+  background: var(--primary-50);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--primary-200);
+  display: inline-block;
+  white-space: nowrap;
+}
+[data-theme="dark"] .dosage-badge-val {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}

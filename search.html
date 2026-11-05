@@ -134,6 +134,16 @@
         </div>
       </div>
 
+      <!-- Dynamic Dosage Filter Bar -->
+      <div id="dosage-filters-row" class="dosage-filter-bar" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin-bottom: 0.85rem; padding: 0.5rem 0.75rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-inline-end: 0.35rem;">
+          ⚖️ تصفية حسب الجرعة (Dosage):
+        </span>
+        <div id="dosage-pills-container" style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+          <!-- Dynamically populated: [الكل] [1000MG] [500MG]... -->
+        </div>
+      </div>
+
       <!-- Minimal Rows Table Container -->
       <div class="minimal-table-box">
         <table class="minimal-rows-table">
