@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-theme="light">
+<html lang="fr" dir="ltr" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>البحث عن المادة الفعالة والبدائل - PharmaDZ</title>
+    <title>Recherche Code DCI & Équivalents Thérapeutiques - PharmaDZ</title>
     <meta
       name="description"
-      content="محرك بحث مبسط وسريع للأدوية والبدائل الجنيسة: ضع اسم الدواء للحصول على المادة الفعالة والجرعة والبدائل المعتمدة وغير المجددة والمسحوبة."
+      content="Moteur de recherche pharmaceutique : identification de la DCI, Code nomenclature, équivalents génériques et princeps du marché algérien."
     />
 
-    <!-- Google Fonts: Cairo & Inter -->
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
 
@@ -45,18 +45,18 @@
               <span
                 class="brand-badge"
                 style="background: #dcfce7; color: #15803d"
-                >البحث السريع</span
+                >Recherche Rapide</span
               >
             </h1>
-            <p data-i18n="site_subtitle">
-              بحث المادة الفعالة والبدائل (Princeps / Générique / Importé)
+            <p>
+              Recherche par Code DCI, Princeps, Générique & Production Locale
             </p>
           </div>
         </div>
 
         <div class="header-actions">
           <!-- Back to Full Directory Link -->
-          <!-- <a
+          <a
             href="index.html"
             class="btn btn-outline btn-pill"
             style="
@@ -65,8 +65,8 @@
               padding: 0.45rem 0.85rem;
             "
           >
-            <span data-i18n="nav_back">← الدليل الشامل (5,425 دواء)</span>
-          </a> -->
+            ← Répertoire Complet (5 425)
+          </a>
 
           <!-- Print -->
           <button
@@ -74,21 +74,7 @@
             class="btn btn-outline btn-pill"
             style="font-size: 0.82rem; padding: 0.45rem 0.85rem"
           >
-            🖨️ <span data-i18n="print_report">طباعة</span>
-          </button>
-
-          <!-- Language Toggle -->
-          <button
-            id="btn-lang-toggle"
-            class="btn btn-outline"
-            style="
-              font-weight: bold;
-              min-width: 75px;
-              font-size: 0.82rem;
-              padding: 0.45rem 0.65rem;
-            "
-          >
-            <span>Français</span>
+            🖨️ Imprimer
           </button>
 
           <!-- Theme Toggle -->
@@ -96,7 +82,7 @@
             id="btn-theme-toggle"
             class="btn-icon"
             style="width: 34px; height: 34px"
-            title="تبديل المظهر"
+            title="Changer de thème"
           >
             <svg
               width="18"
@@ -134,11 +120,11 @@
                 padding-block: 0.85rem;
                 font-weight: 600;
               "
-              placeholder="اكتب اسم الدواء فقط (مثال: Doliprane, Artiz, Augmentin, Tahor...)"
+              placeholder="Nom du médicament, code ou DCI (ex: ACEBUTOLOL IVAL, Doliprane, Artiz...)"
               autocomplete="off"
               autofocus
             />
-            <button id="clear-search-btn" class="clear-search-btn" title="مسح">
+            <button id="clear-search-btn" class="clear-search-btn" title="Effacer">
               ✕
             </button>
           </div>
@@ -148,29 +134,54 @@
         </div>
 
         <!-- Search Mode Bar (Code DCI vs DCI vs Lab) -->
-        <div class="search-mode-bar" style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 0.65rem; padding-top: 0.5rem; border-top: 1px dashed var(--border-color);">
-          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted);">
-            معيار مطابقة البدائل:
+        <div
+          class="search-mode-bar"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem;
+            margin-top: 0.65rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border-color);
+          "
+        >
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted)">
+            Critère de correspondance :
           </span>
           <label class="mode-label">
-            <input type="radio" name="search-mode" value="code" checked style="accent-color: var(--primary-600); cursor: pointer;">
-            <span>🎯 كود المادة (Code DCI)</span>
+            <input
+              type="radio"
+              name="search-mode"
+              value="code"
+              checked
+              style="accent-color: var(--primary-600); cursor: pointer"
+            />
+            <span>🎯 Code DCI (Nomenclature)</span>
           </label>
           <label class="mode-label">
-            <input type="radio" name="search-mode" value="dci" style="accent-color: var(--primary-600); cursor: pointer;">
-            <span>🧬 المادة الفعالة (DCI)</span>
+            <input
+              type="radio"
+              name="search-mode"
+              value="dci"
+              style="accent-color: var(--primary-600); cursor: pointer"
+            />
+            <span>🧬 Substance Active (DCI globale)</span>
           </label>
           <label class="mode-label">
-            <input type="radio" name="search-mode" value="lab" style="accent-color: var(--primary-600); cursor: pointer;">
-            <span>🏢 المخبر المصنع (Laboratoire)</span>
+            <input
+              type="radio"
+              name="search-mode"
+              value="lab"
+              style="accent-color: var(--primary-600); cursor: pointer"
+            />
+            <span>🏢 Laboratoire Détenteur</span>
           </label>
         </div>
 
         <!-- Quick Suggestions Chips -->
         <div class="suggestions-bar" style="margin-top: 0.5rem">
-          <span data-i18n="suggestions_label" style="font-weight: 600"
-            >أمثلة سريعة:</span
-          >
+          <span style="font-weight: 600">Exemples rapides :</span>
           <button class="suggestion-chip" data-suggest="ACEBUTOLOL IVAL">
             Acebutolol Ival 💊
           </button>
@@ -191,7 +202,7 @@
 
     <!-- ================= Main Content Container ================= -->
     <main class="container" style="padding-top: 1.25rem; padding-bottom: 3rem">
-      <!-- Minimalist Summary Strip (Replaces the big card) -->
+      <!-- Minimalist Summary Strip -->
       <div id="summary-bar-container">
         <!-- Populated by js/search_page.js -->
       </div>
@@ -203,39 +214,28 @@
           <div class="alts-subtabs-nav">
             <button class="alts-tab-btn active" data-tab="active">
               <span>🟢</span>
-              <span data-i18n="tab_active"
-                >المعتمدة في السوق (Nomenclature)</span
-              >
+              <span>Spécialités Actives (Nomenclature)</span>
               <span id="badge-count-active" class="badge-count">0</span>
             </button>
             <button class="alts-tab-btn" data-tab="non_renewed">
               <span>🟡</span>
-              <span data-i18n="tab_non_renewed"
-                >غير المجددة (Non Renouvelés)</span
-              >
+              <span>Non Renouvelés</span>
               <span id="badge-count-non-renewed" class="badge-count">0</span>
             </button>
             <button class="alts-tab-btn" data-tab="withdrawn">
               <span>🔴</span>
-              <span data-i18n="tab_withdrawn"
-                >المسحوبة من السوق (Retraits)</span
-              >
+              <span>Retraits du Marché</span>
               <span id="badge-count-withdrawn" class="badge-count">0</span>
             </button>
           </div>
 
           <!-- Quick Filter Pills -->
           <div class="filter-pills-row" style="border: none; padding: 0">
-            <span
-              class="pill-filter active"
-              data-alt-filter="all"
-              data-i18n="filter_all"
-              >الكل</span
-            >
+            <span class="pill-filter active" data-alt-filter="all">Tous</span>
             <span class="pill-filter" data-alt-filter="RE">⭐ Princeps</span>
             <span class="pill-filter" data-alt-filter="GE">🧬 Générique</span>
             <span class="pill-filter" data-alt-filter="I">🌐 Importé</span>
-            <span class="pill-filter" data-alt-filter="F">🇩🇿 Local</span>
+            <span class="pill-filter" data-alt-filter="F">🇩🇿 Production Locale</span>
           </div>
         </div>
 
@@ -244,15 +244,15 @@
           <table class="minimal-rows-table">
             <thead>
               <tr>
-                <th style="min-width: 140px">اسم الدواء (Marque)</th>
-                <th>كود المادة (Code DCI)</th>
-                <th>الجرعة (Dosage)</th>
-                <th>الشكل (Forme)</th>
-                <th>النوع (Princeps / Générique)</th>
-                <th>المصدر (Importé / Local)</th>
-                <th>المخبر والبلد (Laboratoire)</th>
-                <th>التعليب (Conditionnement)</th>
-                <th id="th-extra" style="display: none">ملاحظة السحب</th>
+                <th style="min-width: 140px">Spécialité (Nom de marque)</th>
+                <th>Code DCI</th>
+                <th>Dosage</th>
+                <th>Forme</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Laboratoire & Pays</th>
+                <th>Conditionnement</th>
+                <th id="th-extra" style="display: none">Motif & Date de Retrait</th>
               </tr>
             </thead>
             <tbody id="minimal-rows-tbody">
@@ -266,12 +266,12 @@
     <!-- ================= Footer ================= -->
     <footer class="site-footer" style="margin-top: 2rem; padding-block: 1.5rem">
       <div class="container footer-content">
-        <!-- <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">
-        🇩🇿 الجمهورية الجزائرية الديمقراطية الشعبية - وزارة الصناعة الصيدلانية
-      </div> -->
-        <!-- <div style="font-size: 0.82rem;">
-        بحث مباشر ومبسط في المدوّنة الوطنية للمنتجات الصيدلانية البشرية (2024 - 2026)
-      </div> -->
+        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main)">
+          🇩🇿 République Algérienne Démocratique et Populaire - Ministère de l'Industrie Pharmaceutique
+        </div>
+        <div style="font-size: 0.82rem">
+          Nomenclature Nationale des Produits Pharmaceutiques à usage de la médecine humaine (Version Août 2024 - 2026)
+        </div>
       </div>
     </footer>
 

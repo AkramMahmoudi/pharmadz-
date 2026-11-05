@@ -1,65 +1,32 @@
 /**
- * PharmaDZ - Code DCI, DCI & Laboratory Alternatives Search
- * When a user writes a product name (e.g. ACEBUTOLOL IVAL):
- * 1. Extracts its Code DCI (e.g. 06 F 067)
- * 2. Matches and fetches all products by this Code DCI (default)
- * 3. Allows toggling to DCI (broader) or Laboratory via radio mode selector.
+ * PharmaDZ - Moteur de recherche Code DCI, DCI & Équivalents
+ * Version 100% Française
  */
 
 (function () {
   'use strict';
 
   const I18N = {
-    ar: {
-      nav_back: "← الدليل الشامل (5,425 دواء)",
-      site_subtitle: "بحث كود المادة والبدائل (Code DCI / DCI / Laboratoire)",
-      search_placeholder: "اكتب اسم الدواء فقط (مثال: ACEBUTOLOL IVAL, Doliprane, Artiz...)",
-      suggestions_label: "أمثلة سريعة:",
-      searched_med: "الدواء المبحوث عنه:",
-      code_dci: "كود المادة (Code DCI):",
-      generic_substance: "المادة الفعالة (DCI):",
-      manufacturer_lab: "المخبر المصنع:",
-      therapeutic_category: "التصنيف العلاجي:",
-      tab_active: "المعتمدة في السوق (Nomenclature)",
-      tab_non_renewed: "غير المجددة (Non Renouvelés)",
-      tab_withdrawn: "المسحوبة من السوق (Retraits)",
-      filter_all: "الكل",
-      no_results: "لا توجد أدوية مطابقة لمعايير البحث الحالية.",
-      print_report: "طباعة",
-      status_active: "🟢 معتمد",
-      status_non_renewed: "🟡 غير مجدد",
-      status_withdrawn: "🔴 مسحوب",
-      mode_code_active: "🎯 المطابقة حسب كود المادة (Code DCI)",
-      mode_dci_active: "🧬 المطابقة حسب المادة الفعالة (DCI الشامل)",
-      mode_lab_active: "🏢 المطابقة حسب المخبر المصنع (Laboratoire)"
-    },
-    fr: {
-      nav_back: "← Répertoire complet (5 425 produits)",
-      site_subtitle: "Recherche par Code DCI, Substance & Laboratoire",
-      search_placeholder: "Entrez le nom du médicament (ex: ACEBUTOLOL IVAL, Doliprane...)",
-      suggestions_label: "Exemples rapides :",
-      searched_med: "Produit recherché :",
-      code_dci: "Code DCI :",
-      generic_substance: "Substance active (DCI) :",
-      manufacturer_lab: "Laboratoire détenteur :",
-      therapeutic_category: "Classe thérapeutique :",
-      tab_active: "Spécialités Actives (Nomenclature)",
-      tab_non_renewed: "Non Renouvelés",
-      tab_withdrawn: "Retraits du Marché",
-      filter_all: "Tous",
-      no_results: "Aucun produit ne correspond à ces critères.",
-      print_report: "Imprimer",
-      status_active: "🟢 Actif",
-      status_non_renewed: "🟡 Non Renouvelé",
-      status_withdrawn: "🔴 Retiré",
-      mode_code_active: "🎯 Filtrage par Code DCI",
-      mode_dci_active: "🧬 Filtrage par DCI globale",
-      mode_lab_active: "🏢 Filtrage par Laboratoire détenteur"
-    }
+    searched_med: "Spécialité recherchée :",
+    code_dci: "Code DCI :",
+    generic_substance: "Substance active (DCI) :",
+    manufacturer_lab: "Laboratoire détenteur :",
+    therapeutic_category: "Classe thérapeutique :",
+    tab_active: "Spécialités Actives (Nomenclature)",
+    tab_non_renewed: "Non Renouvelés",
+    tab_withdrawn: "Retraits du Marché",
+    filter_all: "Tous",
+    no_results: "Aucun produit pharmaceutique ne correspond à vos critères.",
+    status_active: "🟢 Actif",
+    status_non_renewed: "🟡 Non Renouvelé",
+    status_withdrawn: "🔴 Retiré",
+    mode_code_active: "🎯 Correspondance par Code DCI (Nomenclature)",
+    mode_dci_active: "🧬 Correspondance par DCI globale",
+    mode_lab_active: "🏢 Correspondance par Laboratoire détenteur"
   };
 
   const state = {
-    lang: localStorage.getItem('pharmadz_lang') || 'ar',
+    lang: 'fr',
     theme: localStorage.getItem('pharmadz_theme') || 'light',
     selectedMed: null,
     selectedCode: null, // e.g. '06 F 067'
@@ -76,7 +43,7 @@
 
   const el = {};
 
-  // Strip accents and clean characters
+  // Nettoyage de chaîne et suppression des accents
   function cleanStr(s) {
     if (!s) return '';
     return s.normalize('NFD')
@@ -87,7 +54,7 @@
       .toUpperCase();
   }
 
-  // Extract base chemical molecule root (e.g. DICLOFENAC SODIQUE -> DICLOFENAC)
+  // Extraction de la racine de la molécule chimique
   function getDciRoot(dciStr) {
     const c = cleanStr(dciStr);
     if (!c) return '';
@@ -108,7 +75,6 @@
     buildSearchIndex();
     bindEvents();
     applyTheme();
-    applyLanguage();
 
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q') || urlParams.get('dci') || urlParams.get('code');
@@ -123,7 +89,6 @@
   function cacheDom() {
     el.html = document.documentElement;
     el.themeBtn = document.getElementById('btn-theme-toggle');
-    el.langBtn = document.getElementById('btn-lang-toggle');
     el.searchInput = document.getElementById('search-input');
     el.clearSearchBtn = document.getElementById('clear-search-btn');
     el.searchDropdown = document.getElementById('search-dropdown');
@@ -171,7 +136,6 @@
 
   function bindEvents() {
     el.themeBtn?.addEventListener('click', toggleTheme);
-    el.langBtn?.addEventListener('click', toggleLanguage);
 
     let searchDebounce;
     el.searchInput?.addEventListener('input', (e) => {
@@ -195,7 +159,7 @@
       }
     });
 
-    // Enter key triggers immediate search
+    // Touche Entrée
     el.searchInput?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const val = el.searchInput.value.trim();
@@ -206,7 +170,7 @@
       }
     });
 
-    // Suggestion chips
+    // Puces d'exemples rapides
     el.suggestionChips?.forEach(chip => {
       chip.addEventListener('click', () => {
         const term = chip.dataset.suggest;
@@ -216,7 +180,7 @@
       });
     });
 
-    // Search Mode Radios (Code DCI, DCI, Laboratoire)
+    // Sélecteur de mode de recherche (Code DCI, DCI, Laboratoire)
     el.searchModeRadios?.forEach(radio => {
       radio.addEventListener('change', () => {
         if (radio.checked) {
@@ -230,7 +194,7 @@
       });
     });
 
-    // Tabs
+    // Onglets de statut (Actif, Non Renouvelé, Retiré)
     el.altsTabs?.forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
@@ -240,7 +204,7 @@
       });
     });
 
-    // Sub-filters (All, Princeps, Générique, Importé, Local)
+    // Sous-filtres (Tous, Princeps, Générique, Importé, Local)
     el.altsFilterPills?.forEach(pill => {
       pill.addEventListener('click', () => {
         const filter = pill.dataset.altFilter;
@@ -250,7 +214,7 @@
       });
     });
 
-    // Print
+    // Impression
     el.printReportBtn?.addEventListener('click', () => {
       window.print();
     });
@@ -265,7 +229,7 @@
     const cleanedQ = cleanStr(query);
     const tokens = cleanedQ.split(' ').filter(Boolean);
 
-    // Multi-token match
+    // Recherche multi-mots
     const matches = state.allMedsIndex.filter(itm => {
       return tokens.every(tok => itm.fullSearchStr.includes(tok));
     }).slice(0, 10);
@@ -273,7 +237,7 @@
     if (matches.length === 0) {
       el.searchDropdown.innerHTML = `
         <div style="padding: 0.75rem; color: var(--text-muted); text-align: center; font-size: 0.85rem;">
-          ${state.lang === 'ar' ? 'لا توجد نتائج مطابقة' : 'Aucun résultat trouvé'}
+          Aucun résultat correspondant
         </div>
       `;
       el.searchDropdown.style.display = 'block';
@@ -285,15 +249,15 @@
       let typeBadge = m.type === 'RE' ? '<span class="tag-princeps" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Princeps</span>'
         : m.type === 'GE' ? '<span class="tag-generique" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Générique</span>' : '';
       let originBadge = m.statut === 'I' ? '<span class="tag-importe" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Importé</span>'
-        : '<span class="tag-local" style="font-size:0.65rem;padding:0.1rem 0.35rem;">Local</span>';
+        : '<span class="tag-local" style="font-size:0.65rem;padding:0.1rem 0.35rem;">DZ Local</span>';
 
       html += `
         <div class="search-dropdown-item" data-key="${m.reg || m.code}_${m.brand}_${m.dosage}">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
             <div>
               <strong style="color: var(--text-main); font-size: 0.95rem;">${m.brand}</strong>
-              <span class="summary-code-val" style="margin-inline-start: 0.35rem; font-size: 0.75rem; padding: 0.1rem 0.4rem;">${m.code}</span>
-              <span class="dosage-badge-val" style="margin-inline-start: 0.25rem; font-size: 0.75rem;">${m.dosage}</span>
+              <span class="summary-code-val" style="margin-left: 0.35rem; font-size: 0.75rem; padding: 0.1rem 0.4rem;">${m.code}</span>
+              <span class="dosage-badge-val" style="margin-left: 0.25rem; font-size: 0.75rem;">${m.dosage}</span>
             </div>
             <div style="display: flex; gap: 0.25rem;">
               ${typeBadge}
@@ -301,7 +265,7 @@
             </div>
           </div>
           <div style="font-size: 0.75rem; color: var(--primary-600); margin-top: 0.15rem;">
-            🧬 DCI: ${m.dci} • 🏢 ${m.lab || ''}
+            🧬 DCI : ${m.dci} • 🏢 ${m.lab || ''}
           </div>
         </div>
       `;
@@ -328,10 +292,10 @@
     const cleanedQ = cleanStr(term);
     const tokens = cleanedQ.split(' ').filter(Boolean);
 
-    // 1. Direct match by exact Code DCI (e.g. user typed "06 F 067")
+    // 1. Correspondance exacte par Code DCI (ex: "06 F 067")
     let match = state.allMedsIndex.find(m => m.codeClean === cleanedQ);
 
-    // 2. Multi-token match across full search string (Brand, Dosage, Code, DCI)
+    // 2. Recherche multi-mots
     if (!match) {
       let candidates = state.allMedsIndex.filter(itm => {
         return tokens.every(tok => itm.fullSearchStr.includes(tok));
@@ -355,7 +319,7 @@
     } else {
       el.summaryContainer.innerHTML = `
         <div style="background: var(--bg-card); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-muted);">
-          🔍 ${state.lang === 'ar' ? 'لم يتم العثور على دواء بهذا الاسم أو الرمز' : 'Aucun médicament trouvé avec ce nom ou code'}
+          🔍 Aucun médicament trouvé avec ce nom ou code.
         </div>
       `;
       el.altsSection.style.display = 'none';
@@ -375,33 +339,31 @@
     el.altsSection.style.display = 'block';
   }
 
-  // Renders the sleek summary strip with Code DCI, DCI, and Lab
+  // Bandeau résumé élégant en une seule ligne
   function renderSummaryStrip(med) {
-    const t = I18N[state.lang];
-    const isAr = state.lang === 'ar';
     const cat = db?.categories[med.cat_id];
-    const catName = isAr ? cat?.name_ar : cat?.name_fr;
+    const catName = cat?.name_fr || '—';
 
     let statusTag = '';
-    if (med.sourceType === 'active') statusTag = `<span class="badge" style="background:#dcfce7;color:#15803d;">${t.status_active}</span>`;
-    else if (med.sourceType === 'non_renewed') statusTag = `<span class="badge" style="background:#fef3c7;color:#b45309;">${t.status_non_renewed}</span>`;
-    else statusTag = `<span class="badge" style="background:#fee2e2;color:#991b1b;">${t.status_withdrawn}</span>`;
+    if (med.sourceType === 'active') statusTag = `<span class="badge" style="background:#dcfce7;color:#15803d;">${I18N.status_active}</span>`;
+    else if (med.sourceType === 'non_renewed') statusTag = `<span class="badge" style="background:#fef3c7;color:#b45309;">${I18N.status_non_renewed}</span>`;
+    else statusTag = `<span class="badge" style="background:#fee2e2;color:#991b1b;">${I18N.status_withdrawn}</span>`;
 
     let typeTag = med.type === 'RE' ? '<span class="tag-princeps">⭐ Princeps</span>'
       : med.type === 'GE' ? '<span class="tag-generique">🧬 Générique</span>'
       : med.type === 'BIO' ? '<span class="tag-bio">🧪 Biosimilaire</span>' : '';
 
-    let originTag = med.statut === 'I' ? '<span class="tag-importe">🌐 Importé</span>' : '<span class="tag-local">🇩🇿 Local</span>';
+    let originTag = med.statut === 'I' ? '<span class="tag-importe">🌐 Importé</span>' : '<span class="tag-local">🇩🇿 DZ Local</span>';
 
-    // Active mode label
-    let modeText = t.mode_code_active;
-    if (state.searchMode === 'dci') modeText = t.mode_dci_active;
-    else if (state.searchMode === 'lab') modeText = t.mode_lab_active;
+    // Label du mode actif
+    let modeText = I18N.mode_code_active;
+    if (state.searchMode === 'dci') modeText = I18N.mode_dci_active;
+    else if (state.searchMode === 'lab') modeText = I18N.mode_lab_active;
 
     el.summaryContainer.innerHTML = `
       <div class="minimal-summary-bar">
         <div class="summary-item">
-          <span class="summary-label">${t.searched_med}</span>
+          <span class="summary-label">${I18N.searched_med}</span>
           <span class="summary-val" style="font-size: 1.15rem; color: var(--text-main);">${med.brand}</span>
           <span class="dosage-badge-val">${med.dosage || ''}</span>
           ${statusTag}
@@ -410,21 +372,21 @@
         </div>
 
         <div class="summary-item">
-          <span class="summary-label">${t.code_dci}</span>
-          <span class="summary-code-val" title="رمز الدواء في المدونة">${med.code || '—'}</span>
+          <span class="summary-label">${I18N.code_dci}</span>
+          <span class="summary-code-val" title="Code d'enregistrement">${med.code || '—'}</span>
         </div>
 
         <div class="summary-item">
-          <span class="summary-label">${t.generic_substance}</span>
+          <span class="summary-label">${I18N.generic_substance}</span>
           <span class="summary-dci-val">${med.dci}</span>
         </div>
 
         <div class="summary-item">
-          <span class="summary-label">${t.manufacturer_lab}</span>
+          <span class="summary-label">${I18N.manufacturer_lab}</span>
           <span class="summary-val" style="font-size: 0.85rem;" title="${med.lab}">${med.lab || '—'}</span>
         </div>
 
-        <div class="summary-item" style="border-inline-start: 1px solid var(--border-color); padding-inline-start: 0.75rem;">
+        <div class="summary-item" style="border-left: 1px solid var(--border-color); padding-left: 0.75rem;">
           <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary-700); background: var(--primary-50); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm);">
             ${modeText}
           </span>
@@ -433,18 +395,18 @@
     `;
   }
 
-  // Core Filtering by Code DCI (default), or DCI, or Lab
+  // Filtrage principal
   function getMatchingAlternatives(targetList) {
     if (!state.selectedMed) return [];
 
-    // Mode 1: Code DCI (User's primary requirement: matches exact Code, e.g. 06 F 067)
+    // Mode 1 : Par Code DCI exact (ex: 06 F 067)
     if (state.searchMode === 'code') {
       const code = state.selectedCode;
       if (!code) return [];
       return targetList.filter(i => (i.code || '').trim().toUpperCase() === code);
     }
 
-    // Mode 2: DCI (Broader matching by active substance)
+    // Mode 2 : Par DCI globale
     if (state.searchMode === 'dci') {
       const root = state.selectedDciRoot || getDciRoot(state.selectedDci);
       if (!root) return [];
@@ -454,7 +416,7 @@
       });
     }
 
-    // Mode 3: Manufacturer Laboratory (Matches by Lab name)
+    // Mode 3 : Par Laboratoire
     if (state.searchMode === 'lab') {
       const labClean = cleanStr(state.selectedLab);
       if (!labClean) return [];
@@ -481,21 +443,18 @@
     if (bWithdrawn) bWithdrawn.textContent = withdrawnCount;
   }
 
-  // Renders the minimal clean table rows
+  // Rendu des lignes de tableau
   function renderRows() {
     if (!state.selectedMed || !el.rowsTbody) return;
-    const t = I18N[state.lang];
-    const isAr = state.lang === 'ar';
 
     let targetList = [];
     if (state.activeSubTab === 'active') targetList = db.active;
     else if (state.activeSubTab === 'non_renewed') targetList = db.non_renewed;
     else if (state.activeSubTab === 'withdrawn') targetList = db.withdrawn;
 
-    // Filter according to active mode (Code DCI, DCI, or Lab)
     let alts = getMatchingAlternatives(targetList);
 
-    // Apply Princeps / Generique / Import / Local filters
+    // Filtres Princeps / Générique / Importé / Local
     if (state.filterType === 'RE') {
       alts = alts.filter(i => i.type === 'RE');
     } else if (state.filterType === 'GE') {
@@ -506,9 +465,7 @@
       alts = alts.filter(i => i.statut === 'F');
     }
 
-    // Sort:
-    // 1. Target medication at top
-    // 2. Numerical dosage descending (1000mg at top)
+    // Tri : Spécialité recherchée en tête, puis dosages numériques décroissants
     alts.sort((a, b) => {
       const isTargetA = state.selectedMed && a.brand === state.selectedMed.brand && a.reg === state.selectedMed.reg;
       const isTargetB = state.selectedMed && b.brand === state.selectedMed.brand && b.reg === state.selectedMed.reg;
@@ -531,7 +488,7 @@
       el.rowsTbody.innerHTML = `
         <tr>
           <td colspan="${isWithdrawn ? 9 : 8}" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
-            🍃 ${t.no_results}
+            🍃 ${I18N.no_results}
           </td>
         </tr>
       `;
@@ -542,7 +499,6 @@
     alts.forEach(item => {
       const isTarget = state.selectedMed && item.brand === state.selectedMed.brand && item.reg === state.selectedMed.reg;
 
-      // Type Badge (Princeps vs Générique)
       let typeBadge = '';
       if (item.type === 'RE') {
         typeBadge = '<span class="tag-princeps">⭐ Princeps</span>';
@@ -554,12 +510,11 @@
         typeBadge = '<span style="color:var(--text-muted);font-size:0.75rem;">—</span>';
       }
 
-      // Origin Badge (Importé vs Local)
       let originBadge = '';
       if (item.statut === 'I') {
         originBadge = '<span class="tag-importe">🌐 Importé</span>';
       } else if (item.statut === 'F') {
-        originBadge = '<span class="tag-local">🇩🇿 Local</span>';
+        originBadge = '<span class="tag-local">🇩🇿 DZ Local</span>';
       } else {
         originBadge = '<span style="color:var(--text-muted);font-size:0.75rem;">—</span>';
       }
@@ -569,7 +524,7 @@
           <td>
             <div style="display: flex; align-items: center; gap: 0.35rem;">
               <span class="med-brand-link">${item.brand}</span>
-              ${isTarget ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.68rem;padding:0.1rem 0.35rem;">${isAr ? 'الدواء المبحوث عنه' : 'Recherché'}</span>` : ''}
+              ${isTarget ? `<span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.68rem;padding:0.1rem 0.35rem;">Recherché</span>` : ''}
             </div>
             <div style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">N° ${item.reg || '—'}</div>
           </td>
@@ -606,7 +561,7 @@
       if (isWithdrawn) {
         html += `
           <td style="font-size: 0.78rem; color: #9f1239; background: #fff1f2;">
-            <strong>${item.withdrawal_date || ''}</strong>: ${item.withdrawal_reason || '—'}
+            <strong>${item.withdrawal_date || ''}</strong> : ${item.withdrawal_reason || '—'}
           </td>
         `;
       }
@@ -631,31 +586,6 @@
     state.theme = state.theme === 'dark' ? 'light' : 'dark';
     localStorage.setItem('pharmadz_theme', state.theme);
     applyTheme();
-  }
-
-  function applyLanguage() {
-    const t = I18N[state.lang];
-    el.html.setAttribute('dir', state.lang === 'ar' ? 'rtl' : 'ltr');
-    el.html.setAttribute('lang', state.lang);
-
-    document.querySelectorAll('[data-i18n]').forEach(node => {
-      const key = node.dataset.i18n;
-      if (t[key]) node.textContent = t[key];
-    });
-
-    if (el.searchInput) el.searchInput.placeholder = t.search_placeholder;
-    if (el.langBtn) el.langBtn.innerHTML = `<span>${state.lang === 'ar' ? 'Français' : 'العربية'}</span>`;
-
-    if (state.selectedMed) {
-      renderSummaryStrip(state.selectedMed);
-      renderRows();
-    }
-  }
-
-  function toggleLanguage() {
-    state.lang = state.lang === 'ar' ? 'fr' : 'ar';
-    localStorage.setItem('pharmadz_lang', state.lang);
-    applyLanguage();
   }
 
   if (document.readyState === 'loading') {

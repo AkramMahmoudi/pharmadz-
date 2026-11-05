@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-theme="light">
+<html lang="fr" dir="ltr" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PharmaDZ - الدليل الوطني للمنتجات الصيدلانية الجزائرية</title>
+    <title>PharmaDZ - Nomenclature Nationale des Produits Pharmaceutiques</title>
     <meta
       name="description"
-      content="منصة متقدمة للبحث في الدليل الوطني للمنتجات الصيدلانية في الجزائر حسب التصنيف العلاجي والمادة الفعالة والأدوية الجنيسة مع كافة التفاصيل التقنية."
+      content="Plateforme officielle de consultation de la Nomenclature Nationale des Produits Pharmaceutiques en Algérie : classification thérapeutique, DCI, génériques et princeps."
     />
 
-    <!-- Google Fonts: Cairo for Arabic & Inter for French/Latin -->
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
 
@@ -34,9 +34,9 @@
               <span>PharmaDZ</span>
               <span class="brand-badge">2024 - 2026</span>
             </h1>
-            <!-- <p data-i18n="site_subtitle">
-              وزارة الصناعة الصيدلانية • الدليل الوطني للأدوية
-            </p> -->
+            <p>
+              Ministère de l'Industrie Pharmaceutique • Nomenclature Nationale
+            </p>
           </div>
         </div>
 
@@ -52,17 +52,17 @@
             "
           >
             <span>🔍</span>
-            <span>محرك البدائل والجنيس (DCI)</span>
+            <span>Recherche Code DCI & Équivalents</span>
           </a>
 
           <!-- Bookmark filter pill -->
           <button
             id="btn-fav-filter"
             class="btn btn-outline btn-pill"
-            title="Afficher les favoris / عرض المفضلة"
+            title="Afficher les favoris"
           >
             <span style="color: #eab308">★</span>
-            <span data-i18n="favorites_only">المفضلة</span>
+            <span data-i18n="favorites_only">Favoris</span>
           </button>
 
           <!-- CSV Export -->
@@ -79,21 +79,11 @@
               <polyline points="7 10 12 15 17 10"></polyline>
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
-            <span data-i18n="export_csv">تصدير CSV</span>
-          </button>
-
-          <!-- Language Toggle -->
-          <button
-            id="btn-lang-toggle"
-            class="btn btn-outline"
-            style="font-weight: bold; min-width: 80px"
-          >
-            <span>Français</span>
+            <span data-i18n="export_csv">Exporter CSV</span>
           </button>
 
           <!-- Theme Toggle -->
-          <button id="btn-theme-toggle" class="btn-icon" title="تبديل المظهر">
-            <!-- Moon Icon by default -->
+          <button id="btn-theme-toggle" class="btn-icon" title="Changer de thème">
             <svg
               width="20"
               height="20"
@@ -114,11 +104,10 @@
       <div class="container">
         <div class="hero-header">
           <h2 class="hero-title" data-i18n="site_title">
-            الدليل الوطني للمنتجات الصيدلانية
+            Nomenclature Nationale des Produits Pharmaceutiques
           </h2>
           <p class="hero-subtitle" data-i18n="site_subtitle">
-            الجمهورية الجزائرية الديمقراطية الشعبية - وزارة الصناعة الصيدلانية
-            (نسخة أوت 2024 - 2026)
+            République Algérienne Démocratique et Populaire - Ministère de l'Industrie Pharmaceutique (Version Août 2024 - 2026)
           </p>
         </div>
 
@@ -135,26 +124,26 @@
       <nav class="main-tabs-bar">
         <button class="tab-btn active" data-tab="active">
           <span>🟢</span>
-          <span data-i18n="active_tab">المعتمدة حالياً</span>
+          <span data-i18n="active_tab">Nomenclature Active</span>
           <span class="tab-badge">5,425</span>
         </button>
         <button class="tab-btn" data-tab="non_renewed">
           <span>🟡</span>
-          <span data-i18n="non_renewed_tab">غير المجددة</span>
+          <span data-i18n="non_renewed_tab">Non Renouvelés</span>
           <span class="tab-badge">1,491</span>
         </button>
         <button class="tab-btn" data-tab="withdrawn">
           <span>🔴</span>
-          <span data-i18n="withdrawn_tab">الأدوية المسحوبة</span>
+          <span data-i18n="withdrawn_tab">Retraits du Marché</span>
           <span class="tab-badge">2,679</span>
         </button>
         <button class="tab-btn" data-tab="generics_explorer">
           <span>🧬</span>
-          <span data-i18n="generics_explorer_tab">دليل البدائل الجنيسة</span>
+          <span data-i18n="generics_explorer_tab">Guide des Génériques & DCI</span>
         </button>
         <button class="tab-btn" data-tab="stats">
           <span>📊</span>
-          <span data-i18n="stats_tab">الإحصائيات والتحليلات</span>
+          <span data-i18n="stats_tab">Statistiques & Analyses</span>
         </button>
       </nav>
 
@@ -183,14 +172,12 @@
             "
           >
             <div>
-              <strong style="color: var(--text-main)"
-                >💡 محرك البحث المخصص للبدائل الجنيسة:</strong
-              >
+              <strong style="color: var(--text-main)">
+                💡 Moteur de recherche Code DCI & Équivalents :
+              </strong>
               <span style="color: var(--text-muted)">
-                اكتب اسم أي منتج فقط ليخرج تركيبه الجنيس (DCI) مع تصنيفاته
-                وبدائله عبر القوائم الثلاث (Nomenclature, Non Renouvelés,
-                Retraits).</span
-              >
+                Saisissez le nom d'un produit pour identifier son Code DCI et afficher instantanément l'ensemble de ses équivalents (Nomenclature, Non Renouvelés, Retraits).
+              </span>
             </div>
             <a
               href="search.html"
@@ -205,7 +192,7 @@
                 text-decoration: none;
               "
             >
-              فتح صفحة البدائل والجنيس ←
+              Ouvrir la recherche par Code DCI →
             </a>
           </div>
 
@@ -217,13 +204,13 @@
                 type="text"
                 id="search-input"
                 class="search-input"
-                placeholder="ابحث بالاسم التجاري، المادة الفعالة (DCI)، رمز الفئة، رقم التسجيل، أو اسم المخبر..."
+                placeholder="Rechercher par nom commercial, DCI, code, N° enregistrement, laboratoire..."
                 autocomplete="off"
               />
               <button
                 id="clear-search-btn"
                 class="clear-search-btn"
-                title="مسح"
+                title="Effacer"
               >
                 ✕
               </button>
@@ -233,41 +220,41 @@
           <!-- Quick Filter Pills: Type & Origin -->
           <div class="filter-pills-row">
             <span class="filter-group-label" data-i18n="type_label"
-              >النوع الصيدلاني:</span
+              >Type :</span
             >
             <span
               class="pill-filter active"
               data-filter-type="all"
               data-i18n="all"
-              >الكل</span
+              >Tous</span
             >
             <span class="pill-filter" data-filter-type="GE"
-              >🧬 جنيس (Générique)</span
+              >🧬 Générique (GE)</span
             >
             <span class="pill-filter" data-filter-type="RE"
-              >⭐ أصلي مرجعي (Princeps)</span
+              >⭐ Princeps (RE)</span
             >
             <span class="pill-filter" data-filter-type="BIO"
-              >🧪 حيوي (Biosimilaire)</span
+              >🧪 Biosimilaire (BIO)</span
             >
 
             <span
               class="filter-group-label"
-              style="margin-inline-start: 1rem"
+              style="margin-left: 1rem"
               data-i18n="origin_label"
-              >المنشأ:</span
+              >Origine :</span
             >
             <span
               class="pill-filter active"
               data-filter-origin="all"
               data-i18n="all"
-              >الكل</span
+              >Tous</span
             >
             <span class="pill-filter" data-filter-origin="F"
-              >🇩🇿 إنتاج محلي (F)</span
+              >🇩🇿 Production Locale (F)</span
             >
             <span class="pill-filter" data-filter-origin="I"
-              >🌐 مستورد (I)</span
+              >🌐 Importation (I)</span
             >
           </div>
 
@@ -278,33 +265,33 @@
                 for="cat-select"
                 class="filter-select-label"
                 data-i18n="category_label"
-                >التصنيف العلاجي (28 فئة):</label
+                >Classe Thérapeutique (28 classes) :</label
               >
               <select id="cat-select" class="filter-select">
-                <option value="all">جميع الفئات العلاجية</option>
+                <option value="all">Toutes les classes thérapeutiques</option>
               </select>
             </div>
 
             <div class="filter-select-wrapper">
               <label for="list-select" class="filter-select-label"
-                >قائمة المواد السامة (Tableau):</label
+                >Tableau des substances vénéneuses :</label
               >
               <select id="list-select" class="filter-select">
-                <option value="all">الكل / Toutes les listes</option>
-                <option value="LISTE I">قائمة I (Liste I)</option>
-                <option value="LISTE II">قائمة II (Liste II)</option>
-                <option value="STUPEFIANT">مخدرات ومؤثرات (Stupéfiants)</option>
+                <option value="all">Toutes les listes</option>
+                <option value="LISTE I">Liste I</option>
+                <option value="LISTE II">Liste II</option>
+                <option value="STUPEFIANT">Stupéfiants</option>
               </select>
             </div>
 
             <div class="filter-select-wrapper">
               <label for="disp-select" class="filter-select-label"
-                >قناة الصرف والتوزيع:</label
+                >Circuit de dispensation :</label
               >
               <select id="disp-select" class="filter-select">
-                <option value="all">الكل (Officine & Hôpital)</option>
-                <option value="OFF">الصيدليات الحرة (Officine - OFF)</option>
-                <option value="HOP">المستشفيات فقط (Hôpital - HOP)</option>
+                <option value="all">Tous (Officine & Hôpital)</option>
+                <option value="OFF">Officine (OFF)</option>
+                <option value="HOP">Hôpital (HOP)</option>
               </select>
             </div>
           </div>
@@ -315,7 +302,7 @@
           <div class="section-head">
             <h3 class="section-title">
               <span>📚</span>
-              <span data-i18n="category_label">تصفح حسب التصنيف العلاجي</span>
+              <span>Parcourir par Classe Thérapeutique</span>
             </h3>
           </div>
           <div id="cat-carousel" class="cat-carousel">
@@ -335,20 +322,20 @@
           <div class="toolbar-controls">
             <!-- Sort Selector -->
             <select id="sort-select" class="sort-select">
-              <option value="brand_asc">الاسم التجاري (أ - ي)</option>
-              <option value="brand_desc">الاسم التجاري (ي - أ)</option>
-              <option value="dci_asc">المادة الفعالة DCI (أ - ي)</option>
-              <option value="code">رمز التصنيف (Code)</option>
-              <option value="date">تاريخ التسجيل الأحدث</option>
+              <option value="brand_asc">Nom commercial (A - Z)</option>
+              <option value="brand_desc">Nom commercial (Z - A)</option>
+              <option value="dci_asc">DCI (A - Z)</option>
+              <option value="code">Code de la nomenclature</option>
+              <option value="date">Date d'enregistrement récente</option>
             </select>
 
             <!-- Per Page Selector -->
             <div class="per-page-select-box">
               <select id="per-page-select" class="sort-select">
-                <option value="24">24 / صفحة</option>
-                <option value="48">48 / صفحة</option>
-                <option value="96">96 / صفحة</option>
-                <option value="all">عرض الكل</option>
+                <option value="24">24 / page</option>
+                <option value="48">48 / page</option>
+                <option value="96">96 / page</option>
+                <option value="all">Afficher tout</option>
               </select>
             </div>
 
@@ -357,7 +344,7 @@
               <button
                 class="view-btn active"
                 data-view="grid"
-                title="Affichage Grille / عرض شبكي"
+                title="Affichage Grille"
               >
                 <svg
                   width="18"
@@ -376,7 +363,7 @@
               <button
                 class="view-btn"
                 data-view="table"
-                title="Affichage Tableau / عرض جدولي"
+                title="Affichage Tableau"
               >
                 <svg
                   width="18"
@@ -421,12 +408,7 @@
     </main>
 
     <!-- ================= Product Detail Modal ================= -->
-    <div
-      id="product-modal"
-      class="modal-overlay"
-      role="dialog"
-      aria-modal="true"
-    >
+    <div id="product-modal" class="modal-overlay" role="dialog" aria-modal="true">
       <div class="modal-container">
         <div class="modal-header">
           <div class="modal-header-info">
@@ -435,11 +417,7 @@
               Dénomination Commune Internationale
             </div>
           </div>
-          <button
-            id="modal-close-btn"
-            class="modal-close-btn"
-            title="Fermer / إغلاق"
-          >
+          <button id="modal-close-btn" class="modal-close-btn" title="Fermer">
             ✕
           </button>
         </div>
@@ -465,7 +443,7 @@
               >
                 <span>🧬</span>
                 <span data-i18n="generic_alternatives_title"
-                  >الأدوية الجنيسة والبدائل المتاحة بنفس المادة الفعالة</span
+                  >Génériques et équivalents avec la même DCI</span
                 >
               </h4>
             </div>
@@ -491,7 +469,7 @@
               ></path>
               <rect x="6" y="14" width="12" height="8"></rect>
             </svg>
-            <span data-i18n="print_sheet">طباعة البطاقة التقنية</span>
+            <span data-i18n="print_sheet">Imprimer la fiche technique</span>
           </button>
 
           <button
@@ -501,29 +479,25 @@
               document.body.style.overflow = '';
             "
           >
-            <span data-i18n="close">إغلاق</span>
+            <span data-i18n="close">Fermer</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ================= Site Footer ================= -->
-    <footer class="site-footer">
+    <!-- ================= Footer ================= -->
+    <footer class="site-footer" style="margin-top: 2rem; padding-block: 1.5rem">
       <div class="container footer-content">
-        <!-- <div style="font-weight: 700; font-size: 1rem; color: var(--text-main);">
-        🇩🇿 الجمهورية الجزائرية الديمقراطية الشعبية - وزارة الصناعة الصيدلانية
-      </div> -->
-        <div>
-          Nomenclature Nationale des Produits Pharmaceutiques à usage de la
-          médecine humaine (Version Août 2024 - 2026)
+        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main)">
+          🇩🇿 République Algérienne Démocratique et Populaire - Ministère de l'Industrie Pharmaceutique
         </div>
-        <!-- <div style="font-size: 0.78rem; opacity: 0.8;">
-        تطوير موقع استعراض الأدوية الصيدلانية والجنيسة • HTML5, Modern CSS, Vanilla JavaScript
-      </div> -->
+        <div style="font-size: 0.82rem">
+          Nomenclature Nationale des Produits Pharmaceutiques à usage de la médecine humaine (Version Août 2024 - 2026)
+        </div>
       </div>
     </footer>
 
-    <!-- Data Script (Provides window.NOMENCLATURE_DATA offline without CORS issues) -->
+    <!-- Data Script -->
     <script src="data/medications_data.js"></script>
 
     <!-- Main Application Script -->

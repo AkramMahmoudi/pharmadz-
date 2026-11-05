@@ -129,7 +129,7 @@
 
   // State
   const state = {
-    lang: localStorage.getItem('pharmadz_lang') || 'ar',
+    lang: 'fr',
     theme: localStorage.getItem('pharmadz_theme') || 'light',
     currentTab: 'active', // 'active' | 'non_renewed' | 'withdrawn' | 'generics_explorer' | 'stats'
     searchQuery: '',
