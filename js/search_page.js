@@ -1,8 +1,8 @@
 /**
  * PharmaDZ - Minimalist Generic & Alternatives Search
- * Direct, streamlined, no cards:
+ * Direct, streamlined, no cards, no clutter:
  * Summary strip + Clean data rows (Dosage, Princeps/Générique, Importé/Local, Lab).
- * With multi-token search ("Doliprane 1000"), dosage filter pills, and robust DCI normalization.
+ * Intelligently prioritizes and sorts dosages (1000MG at top).
  */
 
 (function () {
@@ -21,7 +21,6 @@
       tab_non_renewed: "غير المجددة (Non Renouvelés)",
       tab_withdrawn: "المسحوبة من السوق (Retraits)",
       filter_all: "الكل",
-      dosage_filter_label: "تصفية حسب الجرعة:",
       no_results: "لا توجد أدوية مطابقة لمعايير البحث الحالية.",
       print_report: "طباعة",
       status_active: "🟢 معتمد",
@@ -40,7 +39,6 @@
       tab_non_renewed: "Non Renouvelés",
       tab_withdrawn: "Retraits du Marché",
       filter_all: "Tous",
-      dosage_filter_label: "Filtrer par dosage :",
       no_results: "Aucun produit ne correspond à ces critères.",
       print_report: "Imprimer",
       status_active: "🟢 Actif",
@@ -55,7 +53,6 @@
     selectedMed: null,
     selectedDci: null,
     selectedDciRoot: null,
-    selectedDosage: 'all', // 'all' or specific dosage like '1000MG'
     activeSubTab: 'active', // 'active' | 'non_renewed' | 'withdrawn'
     filterType: 'all', // 'all' | 'RE' | 'GE' | 'I' | 'F'
     allMedsIndex: []
@@ -65,7 +62,7 @@
 
   const el = {};
 
-  // Strip accents and non-ASCII chars
+  // Strip accents and clean characters
   function cleanStr(s) {
     if (!s) return '';
     return s.normalize('NFD')
@@ -121,7 +118,6 @@
     el.altsSection = document.getElementById('alts-section');
     el.altsTabs = document.querySelectorAll('.alts-tab-btn');
     el.altsFilterPills = document.querySelectorAll('[data-alt-filter]');
-    el.dosagePillsContainer = document.getElementById('dosage-pills-container');
     el.rowsTbody = document.getElementById('minimal-rows-tbody');
     el.thExtra = document.getElementById('th-extra');
     el.printReportBtn = document.getElementById('btn-print-report');
@@ -208,7 +204,6 @@
         const tab = btn.dataset.tab;
         state.activeSubTab = tab;
         el.altsTabs.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-        renderDosagePills();
         renderRows();
       });
     });
@@ -241,7 +236,7 @@
     // Multi-token match
     const matches = state.allMedsIndex.filter(itm => {
       return tokens.every(tok => itm.fullSearchStr.includes(tok));
-    }).slice(0, 12);
+    }).slice(0, 10);
 
     if (matches.length === 0) {
       el.searchDropdown.innerHTML = `
@@ -311,19 +306,17 @@
     let match = null;
     if (candidates.length > 0) {
       if (numberToken) {
-        // Find candidate where dosage contains that number
         match = candidates.find(c => (c.dosage || '').includes(numberToken));
       }
       if (!match) match = candidates[0];
     }
 
     if (!match) {
-      // Fallback
       match = state.allMedsIndex.find(m => m.fullSearchStr.includes(cleanedQ));
     }
 
     if (match) {
-      selectTargetMed(match, numberToken);
+      selectTargetMed(match);
     } else {
       el.summaryContainer.innerHTML = `
         <div style="background: var(--bg-card); border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; color: var(--text-muted);">
@@ -334,21 +327,13 @@
     }
   }
 
-  function selectTargetMed(med, requestedDosageNum) {
+  function selectTargetMed(med) {
     state.selectedMed = med;
     state.selectedDci = (med.dci || '').trim();
     state.selectedDciRoot = med.dciRoot || getDciRoot(med.dci);
 
-    // Set initial dosage filter if explicitly requested or default to 'all'
-    if (requestedDosageNum) {
-      state.selectedDosage = requestedDosageNum;
-    } else {
-      state.selectedDosage = 'all';
-    }
-
     renderSummaryStrip(med);
     updateTabBadges();
-    renderDosagePills();
     renderRows();
     el.altsSection.style.display = 'block';
   }
@@ -419,60 +404,6 @@
     if (bWithdrawn) bWithdrawn.textContent = withdrawnCount;
   }
 
-  // Render clickable Dosage Filter Pills: [الكل] [1000MG] [500MG] [100MG]
-  function renderDosagePills() {
-    if (!el.dosagePillsContainer) return;
-    const t = I18N[state.lang];
-
-    let targetList = [];
-    if (state.activeSubTab === 'active') targetList = db.active;
-    else if (state.activeSubTab === 'non_renewed') targetList = db.non_renewed;
-    else if (state.activeSubTab === 'withdrawn') targetList = db.withdrawn;
-
-    const allAlts = getMatchingAlternatives(targetList);
-
-    // Extract unique dosages
-    const dosageCounts = {};
-    allAlts.forEach(itm => {
-      const d = (itm.dosage || '').trim();
-      if (d) dosageCounts[d] = (dosageCounts[d] || 0) + 1;
-    });
-
-    // Sort dosages (1000MG first, then descending numbers)
-    const sortedDosages = Object.keys(dosageCounts).sort((a, b) => {
-      const numA = parseInt(a.replace(/\D/g, ''), 10) || 0;
-      const numB = parseInt(b.replace(/\D/g, ''), 10) || 0;
-      return numB - numA;
-    });
-
-    let pillsHtml = `
-      <button class="dosage-pill-btn ${state.selectedDosage === 'all' ? 'active' : ''}" data-dosage="all">
-        ${t.filter_all} (${allAlts.length})
-      </button>
-    `;
-
-    sortedDosages.forEach(d => {
-      const isActive = state.selectedDosage === d || (state.selectedDosage !== 'all' && d.includes(state.selectedDosage));
-      pillsHtml += `
-        <button class="dosage-pill-btn ${isActive ? 'active' : ''}" data-dosage="${d}">
-          ${d} (${dosageCounts[d]})
-        </button>
-      `;
-    });
-
-    el.dosagePillsContainer.innerHTML = pillsHtml;
-
-    el.dosagePillsContainer.querySelectorAll('.dosage-pill-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.selectedDosage = btn.dataset.dosage;
-        el.dosagePillsContainer.querySelectorAll('.dosage-pill-btn').forEach(b => {
-          b.classList.toggle('active', b.dataset.dosage === state.selectedDosage);
-        });
-        renderRows();
-      });
-    });
-  }
-
   // Renders the minimal clean table rows
   function renderRows() {
     if (!state.selectedDciRoot || !el.rowsTbody) return;
@@ -487,14 +418,6 @@
     // Filter by DCI Root
     let alts = getMatchingAlternatives(targetList);
 
-    // Filter by Dosage if selected
-    if (state.selectedDosage !== 'all') {
-      alts = alts.filter(i => {
-        const d = (i.dosage || '').toUpperCase();
-        return d.includes(state.selectedDosage.toUpperCase());
-      });
-    }
-
     // Apply Princeps / Generique / Import / Local filters
     if (state.filterType === 'RE') {
       alts = alts.filter(i => i.type === 'RE');
@@ -505,6 +428,22 @@
     } else if (state.filterType === 'F') {
       alts = alts.filter(i => i.statut === 'F');
     }
+
+    // Sort intelligently:
+    // 1. Target medication first
+    // 2. Highest numerical dosages first (e.g. 1000MG at top, then 500MG, 100MG, etc.)
+    alts.sort((a, b) => {
+      const isTargetA = state.selectedMed && a.brand === state.selectedMed.brand && a.reg === state.selectedMed.reg;
+      const isTargetB = state.selectedMed && b.brand === state.selectedMed.brand && b.reg === state.selectedMed.reg;
+      if (isTargetA) return -1;
+      if (isTargetB) return 1;
+
+      const numA = parseInt((a.dosage || '').replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt((b.dosage || '').replace(/\D/g, ''), 10) || 0;
+      if (numB !== numA) return numB - numA;
+
+      return (a.brand || '').localeCompare(b.brand || '');
+    });
 
     const isWithdrawn = state.activeSubTab === 'withdrawn';
     if (el.thExtra) {
@@ -627,7 +566,6 @@
 
     if (state.selectedMed) {
       renderSummaryStrip(state.selectedMed);
-      renderDosagePills();
       renderRows();
     }
   }
